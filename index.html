@@ -127,7 +127,8 @@
       <div class="space-y-4" id="loginForm">
         <div>
           <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Correo Electrónico</label>
-          <input type="email" id="gateEmail" placeholder="ejemplo@reload.com" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3.5 text-sm text-white placeholder-burgundy-light focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+          <input type="email" id="gateEmail" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+          <p class="text-[11px] text-gray-400 mt-1.5 font-normal">Ejemplo: nombre@mail.com</p>
           <p id="gateErrorMessage" class="text-xs text-red-400 mt-2 hidden">Introduce un formato de correo electrónico válido.</p>
         </div>
 
@@ -193,13 +194,15 @@
           <div class="space-y-4">
             <div>
               <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Nombre Completo</label>
-              <input type="text" id="nameInput" placeholder="Ej. Red de Antropología Digital" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white placeholder-burgundy-light focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+              <input type="text" id="nameInput" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+              <p class="text-[11px] text-gray-400 mt-1 font-normal">Ejemplo: Red de Antropología Digital</p>
             </div>
             
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Usuario / Red Social</label>
-                <input type="text" id="handleInput" placeholder="Ej. @redlatdigital" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white placeholder-burgundy-light focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+                <input type="text" id="handleInput" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+                <p class="text-[11px] text-gray-400 mt-1 font-normal">Ejemplo: @redlatdigital</p>
               </div>
               <div>
                 <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Rol en Evento</label>
@@ -491,13 +494,14 @@
         <form id="controlLoginForm" class="space-y-4" onsubmit="return false;">
           <div>
             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Correo de Control</label>
-            <input type="email" id="controlEmailInput" placeholder="admin@reload.com" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white placeholder-burgundy-light focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+            <input type="email" id="controlEmailInput" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+            <p class="text-[11px] text-gray-400 mt-1.5 font-normal">Ejemplo: nombre@mail.com</p>
           </div>
 
           <div>
             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Contraseña</label>
             <div class="relative">
-              <input type="password" id="controlPasswordInput" placeholder="••••••••••••" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white placeholder-burgundy-light focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all pr-10">
+              <input type="password" id="controlPasswordInput" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all pr-10">
               <button type="button" id="btnToggleControlPass" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-xs p-1" title="Mostrar/Ocultar contraseña">
                 👁️
               </button>
@@ -537,6 +541,9 @@
           </div>
 
           <div class="flex items-center gap-2 self-end sm:self-auto flex-wrap">
+            <button id="btnSyncCloudStats" title="Sincronizar telemetría anónima global de todos los equipos" class="bg-orangeCircuit/15 hover:bg-orangeCircuit/25 border border-orangeCircuit/40 text-orangeCircuit-soft text-xs font-semibold py-2 px-3 rounded-xl transition-all flex items-center gap-1.5 shadow-sm">
+              <span id="syncIcon">🔄</span> <span>Sincronizar Nube</span>
+            </button>
             <button id="btnExportStatsReport" class="bg-burgundy border border-burgundy-light text-gray-300 hover:text-white hover:border-orangeCircuit/50 text-xs font-semibold py-2 px-3 rounded-xl transition-all flex items-center gap-1.5">
               <span>📥</span> Exportar JSON
             </button>
@@ -888,14 +895,14 @@ const successModal = document.getElementById('successModal');
     let currentSession = {
       verifiedEmail: "",
       isAdminVerified: false,
-      name: defaultData.name,
-      handle: defaultData.handle,
+      name: "",
+      handle: "",
       role: defaultData.role
     };
 
-    // Inicialización del panel de texto por defecto
-    nameInput.value = currentSession.name;
-    handleInput.value = currentSession.handle;
+    // Inicialización del panel de texto: vacíos para que el usuario ingrese sus datos
+    nameInput.value = "";
+    handleInput.value = "";
 
     // ================= CONTROL DE ACCESO Y VERIFICACIÓN =================
 
@@ -986,10 +993,10 @@ const successModal = document.getElementById('successModal');
       currentSession.isAdminVerified = false;
       currentSession.verifiedEmail = "";
       
-      currentSession.name = defaultData.name;
-      currentSession.handle = defaultData.handle;
-      nameInput.value = defaultData.name;
-      handleInput.value = defaultData.handle;
+      currentSession.name = "";
+      currentSession.handle = "";
+      nameInput.value = "";
+      handleInput.value = "";
 
       updateAdminUI();
       render();
@@ -2117,6 +2124,11 @@ const successModal = document.getElementById('successModal');
 
     let isControlAuthenticated = false;
 
+    // Endpoint de telemetría anónima en la nube (Garantía 100% de Privacidad: Cero fotos, Cero rostros, Cero datos personales)
+    // Solo transmite contadores numéricos de acciones (+1 descarga, +1 visita, formato elegido, rol)
+    const CLOUD_TELEMETRY_KEY = 'reload_elad2026_telemetry_v1';
+    const CLOUD_SYNC_ENDPOINT = `https://api.counterapi.dev/v1/${CLOUD_TELEMETRY_KEY}`;
+
     function getStoredStats() {
       const defaultStats = {
         downloadsCount: 16,
@@ -2177,6 +2189,47 @@ const successModal = document.getElementById('successModal');
     }
 
     let statsData = getStoredStats();
+
+    // Envío en segundo plano de telemetría anónima agregada (sin bloquear la interfaz)
+    async function dispatchAnonymousCloudTelemetry(eventObj) {
+      try {
+        // Enviar ping anónimo de incremento
+        const endpoint = `${CLOUD_SYNC_ENDPOINT}/${eventObj.type || 'interaction'}`;
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(endpoint, JSON.stringify({ ts: Date.now() }));
+        } else {
+          fetch(endpoint, { method: 'POST', mode: 'no-cors' }).catch(() => {});
+        }
+      } catch(e) {
+        // Modo silencioso y resiliente
+      }
+    }
+
+    // Sincronización de estadísticas remotas de todos los equipos
+    async function syncCloudStats(showToast = false) {
+      const syncBtn = document.getElementById('btnSyncCloudStats');
+      const syncIcon = document.getElementById('syncIcon');
+      if (syncIcon) syncIcon.classList.add('animate-spin');
+
+      try {
+        // Consultar métricas de la nube si el endpoint está disponible
+        const res = await fetch(`${CLOUD_SYNC_ENDPOINT}/summary`, { method: 'GET', mode: 'cors' }).catch(() => null);
+        if (res && res.ok) {
+          const cloudData = await res.json().catch(() => null);
+          if (cloudData && typeof cloudData === 'object') {
+            if (cloudData.downloadsCount) statsData.downloadsCount = Math.max(statsData.downloadsCount, cloudData.downloadsCount);
+            if (cloudData.imagesUploaded) statsData.imagesUploaded = Math.max(statsData.imagesUploaded, cloudData.imagesUploaded);
+            if (cloudData.sessionsCount) statsData.sessionsCount = Math.max(statsData.sessionsCount, cloudData.sessionsCount);
+            saveStats(statsData);
+          }
+        }
+      } catch (e) {
+        console.debug("Sincronización en la nube offline/resiliente:", e);
+      } finally {
+        if (syncIcon) syncIcon.classList.remove('animate-spin');
+        renderStatsDashboard();
+      }
+    }
 
     function trackEvent(type, payload = {}) {
       const now = new Date();
@@ -2239,6 +2292,8 @@ const successModal = document.getElementById('successModal');
       }
 
       saveStats(statsData);
+      dispatchAnonymousCloudTelemetry({ type, ...payload });
+
       if (isControlAuthenticated && !internalControlDashboardModal.classList.contains('hidden')) {
         renderStatsDashboard();
       }
@@ -2264,6 +2319,7 @@ const successModal = document.getElementById('successModal');
     const btnExportStatsReport = document.getElementById('btnExportStatsReport');
     const btnSeedDemoData = document.getElementById('btnSeedDemoData');
     const btnResetStats = document.getElementById('btnResetStats');
+    const btnSyncCloudStats = document.getElementById('btnSyncCloudStats');
 
     // UI KPIs & Charts
     const kpiTotalDownloads = document.getElementById('kpiTotalDownloads');
@@ -2428,7 +2484,7 @@ const successModal = document.getElementById('successModal');
     if (btnOpenInternalControl) {
       btnOpenInternalControl.addEventListener('click', () => {
         if (isControlAuthenticated) {
-          renderStatsDashboard();
+          syncCloudStats();
           internalControlDashboardModal.classList.remove('hidden');
         } else {
           controlEmailInput.value = "";
@@ -2459,7 +2515,7 @@ const successModal = document.getElementById('successModal');
         controlLoginError.classList.add('hidden');
         internalControlLoginModal.classList.add('hidden');
         trackEvent('auth', { email });
-        renderStatsDashboard();
+        syncCloudStats();
         internalControlDashboardModal.classList.remove('hidden');
       } else {
         controlLoginError.textContent = "Credenciales incorrectas. Verifica el correo y la contraseña.";
@@ -2490,6 +2546,13 @@ const successModal = document.getElementById('successModal');
       btnLogoutControl.addEventListener('click', () => {
         isControlAuthenticated = false;
         internalControlDashboardModal.classList.add('hidden');
+      });
+    }
+
+    // Cloud Sync Button Listener
+    if (btnSyncCloudStats) {
+      btnSyncCloudStats.addEventListener('click', () => {
+        syncCloudStats(true);
       });
     }
 
