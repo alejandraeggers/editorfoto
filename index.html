@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob:; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' ws: http: https:;">
-  <title>Creador de Posters de Eventos | RELOAD</title>
+  <title>RELoAD - Tu foto ELAD26</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts para tipografía #ELAD26 -->
@@ -2191,38 +2193,61 @@ const successModal = document.getElementById('successModal');
     let statsData = getStoredStats();
 
     // Envío en segundo plano de telemetría anónima agregada (sin bloquear la interfaz)
+    // counterapi.dev: incrementar un contador con GET a /{namespace}/{key}/add
     async function dispatchAnonymousCloudTelemetry(eventObj) {
       try {
-        // Enviar ping anónimo de incremento
-        const endpoint = `${CLOUD_SYNC_ENDPOINT}/${eventObj.type || 'interaction'}`;
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon(endpoint, JSON.stringify({ ts: Date.now() }));
-        } else {
-          fetch(endpoint, { method: 'POST', mode: 'no-cors' }).catch(() => {});
-        }
+        const key = eventObj.type === 'download' ? 'download'
+                  : eventObj.type === 'upload'   ? 'upload'
+                  : eventObj.type === 'session'  ? 'session'
+                  : null;
+        if (!key) return; // solo rastreamos los 3 contadores principales
+        const endpoint = `${CLOUD_SYNC_ENDPOINT}/${key}/add`;
+        // counterapi.dev acepta GET para incrementar — sin datos sensibles
+        fetch(endpoint, { method: 'GET', mode: 'no-cors' }).catch(() => {});
       } catch(e) {
         // Modo silencioso y resiliente
       }
     }
 
     // Sincronización de estadísticas remotas de todos los equipos
+    // counterapi.dev: leer el valor actual de un contador con GET a /{namespace}/{key}
     async function syncCloudStats(showToast = false) {
-      const syncBtn = document.getElementById('btnSyncCloudStats');
       const syncIcon = document.getElementById('syncIcon');
       if (syncIcon) syncIcon.classList.add('animate-spin');
 
       try {
-        // Consultar métricas de la nube si el endpoint está disponible
-        const res = await fetch(`${CLOUD_SYNC_ENDPOINT}/summary`, { method: 'GET', mode: 'cors' }).catch(() => null);
-        if (res && res.ok) {
-          const cloudData = await res.json().catch(() => null);
-          if (cloudData && typeof cloudData === 'object') {
-            if (cloudData.downloadsCount) statsData.downloadsCount = Math.max(statsData.downloadsCount, cloudData.downloadsCount);
-            if (cloudData.imagesUploaded) statsData.imagesUploaded = Math.max(statsData.imagesUploaded, cloudData.imagesUploaded);
-            if (cloudData.sessionsCount) statsData.sessionsCount = Math.max(statsData.sessionsCount, cloudData.sessionsCount);
-            saveStats(statsData);
-          }
+        // Leer los 3 contadores en paralelo desde los servidores de counterapi.dev
+        const [resSession, resDownload, resUpload] = await Promise.all([
+          fetch(`${CLOUD_SYNC_ENDPOINT}/session`,  { method: 'GET' }).catch(() => null),
+          fetch(`${CLOUD_SYNC_ENDPOINT}/download`, { method: 'GET' }).catch(() => null),
+          fetch(`${CLOUD_SYNC_ENDPOINT}/upload`,   { method: 'GET' }).catch(() => null),
+        ]);
+
+        // counterapi.dev responde: { namespace, key, count }
+        const parseCount = async (res) => {
+          if (!res || !res.ok) return null;
+          const json = await res.json().catch(() => null);
+          return json && typeof json.count === 'number' ? json.count : null;
+        };
+
+        const [cloudSessions, cloudDownloads, cloudUploads] = await Promise.all([
+          parseCount(resSession),
+          parseCount(resDownload),
+          parseCount(resUpload),
+        ]);
+
+        let updated = false;
+        if (cloudDownloads !== null && cloudDownloads > statsData.downloadsCount) {
+          statsData.downloadsCount = cloudDownloads; updated = true;
         }
+        if (cloudUploads !== null && cloudUploads > statsData.imagesUploaded) {
+          statsData.imagesUploaded = cloudUploads; updated = true;
+        }
+        if (cloudSessions !== null && cloudSessions > statsData.sessionsCount) {
+          statsData.sessionsCount = cloudSessions; updated = true;
+        }
+        if (updated) saveStats(statsData);
+
       } catch (e) {
         console.debug("Sincronización en la nube offline/resiliente:", e);
       } finally {
