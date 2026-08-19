@@ -505,12 +505,6 @@
             <p id="controlLoginError" class="text-xs text-red-400 mt-2 hidden">Credenciales incorrectas. Verifica tu correo y contraseña.</p>
           </div>
 
-          <div class="bg-burgundy-deep/70 border border-burgundy-light/40 rounded-xl p-3 text-[11px] text-gray-400">
-            <span class="text-orangeCircuit font-bold block mb-0.5">🔑 Credenciales de Control:</span>
-            <p class="font-mono text-gray-300">Correo: <strong class="text-white">admin@reload.com</strong></p>
-            <p class="font-mono text-gray-300">Contraseña: <strong class="text-white">Reload2026*</strong></p>
-          </div>
-
           <button type="submit" id="btnSubmitControlLogin" class="w-full bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft hover:from-orangeCircuit/90 hover:to-orangeCircuit-soft/90 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-orangeCircuit/20 flex items-center justify-center gap-2 text-sm">
             <span>Ingresar a Estadísticas</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2437,7 +2431,7 @@ const successModal = document.getElementById('successModal');
           renderStatsDashboard();
           internalControlDashboardModal.classList.remove('hidden');
         } else {
-          controlEmailInput.value = "admin@reload.com";
+          controlEmailInput.value = "";
           controlPasswordInput.value = "";
           controlLoginError.classList.add('hidden');
           internalControlLoginModal.classList.remove('hidden');
