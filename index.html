@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob:; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' ws: http: https:;">
+  <title>Creador de Posters de Eventos | RELOAD</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts para tipografía #ELAD26 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            burgundy: {
+              DEFAULT: '#4A0E1A',
+              light: '#5D1624',
+              dark: '#2B070D',
+              deep: '#1F0409',
+            },
+            cream: {
+              DEFAULT: '#FDF3C7',
+            },
+            orangeCircuit: {
+              DEFAULT: '#FF6600',
+              soft: '#FF8A65',
+            }
+          },
+          fontFamily: {
+            sans: ['Roboto', 'sans-serif'],
+            montserrat: ['Montserrat', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #1F0409;
+    }
+    .font-tech {
+      font-family: 'Montserrat', sans-serif;
+    }
+    /* Estilo para simular el grano de película en la interfaz */
+    .noise-bg {
+      background-image: radial-gradient(rgba(255, 102, 0, 0.08) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+    .animate-shake {
+      animation: shake 0.5s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+    /* Optimización táctil y controles para móviles */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      border-radius: 6px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #FF6600;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255, 102, 0, 0.7);
+      border: 2px solid #FFFFFF;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #FF6600;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255, 102, 0, 0.7);
+      border: 2px solid #FFFFFF;
+    }
+    /* Prevenir zoom involuntario en iOS Safari al enfocar inputs */
+    @media (max-width: 768px) {
+      input[type="text"], input[type="email"], select {
+        font-size: 16px !important;
+      }
+    }
+    /* Desactivar scroll nativo al manipular el canvas */
+    canvas {
+      touch-action: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+  </style>
+</head>
+<body class="text-gray-100 min-h-screen flex flex-col noise-bg">
+
+  <!-- ================= MODAL DE VERIFICACIÓN DE STAFF ================= -->
+  <div id="accessGate" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[200] flex items-center justify-center p-4 transition-all duration-500 hidden">
+    <div class="max-w-md w-full bg-burgundy-dark border border-burgundy-light rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+      <!-- Decoración de fondo de consola cyber -->
+      <div class="absolute -right-16 -top-16 w-36 h-36 bg-orangeCircuit/10 rounded-full blur-2xl"></div>
+      
+      <!-- Botón para cerrar modal -->
+      <button id="btnCloseAccessGate" class="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+
+      <div class="text-center mb-8">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orangeCircuit via-burgundy to-orangeCircuit-soft flex items-center justify-center shadow-lg shadow-orangeCircuit/20 mx-auto mb-4">
+          <span class="text-white font-extrabold font-tech text-2xl">RE</span>
+        </div>
+        <h2 class="text-2xl font-bold font-tech text-cream tracking-tight">VERIFICAR STAFF</h2>
+        <p class="text-xs text-gray-400 mt-2">Ingresa tu correo electrónico registrado para verificar tu identidad y desbloquear los roles de Organizador o Staff.</p>
+      </div>
+
+      <!-- Formulario de Check-In -->
+      <div class="space-y-4" id="loginForm">
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Correo Electrónico</label>
+          <input type="email" id="gateEmail" placeholder="ejemplo@reload.com" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3.5 text-sm text-white placeholder-burgundy-light focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+          <p id="gateErrorMessage" class="text-xs text-red-400 mt-2 hidden">Introduce un formato de correo electrónico válido.</p>
+        </div>
+
+        <button id="btnVerifyEmail" class="w-full bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft hover:from-orangeCircuit/90 hover:to-orangeCircuit-soft/90 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg shadow-orangeCircuit/20 flex items-center justify-center gap-2 text-sm">
+          <span>Verificar Correo</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ================= APLICACIÓN PRINCIPAL ================= -->
+  <div id="mainApp" class="transition-all duration-700 flex flex-col min-h-screen">
+    
+    <!-- Encabezado / Navbar -->
+    <header class="border-b border-burgundy-light/40 bg-burgundy-deep/90 backdrop-blur-md sticky top-0 z-50 px-3 sm:px-4 py-3">
+      <div class="max-w-7xl mx-auto flex justify-between items-center gap-2">
+        <div class="flex items-center space-x-2.5 sm:space-x-3">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-tr from-orangeCircuit via-burgundy to-orangeCircuit-soft flex items-center justify-center shadow-lg shadow-orangeCircuit/20 shrink-0">
+            <span class="text-white font-extrabold font-tech text-base sm:text-lg">RE</span>
+          </div>
+          <div>
+            <h1 class="text-sm sm:text-lg font-bold tracking-tight font-tech text-transparent bg-clip-text bg-gradient-to-r from-white via-cream to-orangeCircuit-soft leading-tight">
+              RELOAD <span class="text-[10px] sm:text-xs font-semibold text-orangeCircuit ml-0.5 sm:ml-1 block sm:inline">POSTER GENERATOR</span>
+            </h1>
+            <p class="text-[9px] sm:text-[10px] text-gray-400 hidden xs:block">Crea, personaliza y comparte tu participación</p>
+          </div>
+        </div>
+        
+        <!-- Estado de Credencial -->
+        <div class="flex items-center space-x-2 sm:space-x-3 text-xs shrink-0">
+          <div class="hidden sm:flex flex-col items-end">
+            <span id="userBadgeEmail" class="text-gray-400 font-mono text-[11px]">acceso-publico@reload.com</span>
+            <span id="userBadgeTier" class="text-[9px] text-orangeCircuit font-bold uppercase tracking-wider">Credencial Pública</span>
+          </div>
+          <button id="btnChangeAccount" class="text-orangeCircuit hover:text-orangeCircuit-soft text-[10px] sm:text-[11px] font-semibold border border-orangeCircuit/20 bg-orangeCircuit/5 px-2 sm:px-2.5 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+            Verificar Staff 🔒
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-3 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8">
+      
+      <!-- Columna Izquierda: Panel de Control (5 columnas en desktop, debajo del preview en móvil) -->
+      <section class="order-2 lg:order-1 lg:col-span-5 flex flex-col space-y-4 sm:space-y-6">
+
+        <!-- Paso 1: Personalizar Textos -->
+        <div class="bg-burgundy-dark border border-burgundy-light/50 rounded-2xl p-4 sm:p-6 shadow-xl">
+          <h2 class="text-sm font-semibold text-cream font-tech uppercase tracking-wider mb-4 flex items-center gap-2">
+            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-orangeCircuit/10 text-orangeCircuit-soft text-xs font-bold">1</span>
+            Información de Participante
+          </h2>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Nombre Completo</label>
+              <input type="text" id="nameInput" placeholder="Ej. Red de Antropología Digital" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white placeholder-burgundy-light focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+            </div>
+            
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Usuario / Red Social</label>
+                <input type="text" id="handleInput" placeholder="Ej. @redlatdigital" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white placeholder-burgundy-light focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Rol en Evento</label>
+                <select id="roleInput" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-3 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+                  <option value="PARTICIPANTE">PARTICIPANTE</option>
+                  <option value="PONENTE">PONENTE</option>
+                  <option value="LOCKED">🔒 ORGANIZADOR / STAFF</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 2: Estilos y Filtros -->
+        <div class="bg-burgundy-dark border border-burgundy-light/50 rounded-2xl p-4 sm:p-6 shadow-xl">
+          <h2 class="text-sm font-semibold text-cream font-tech uppercase tracking-wider mb-4 flex items-center gap-2">
+            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-orangeCircuit/10 text-orangeCircuit-soft text-xs font-bold">2</span>
+            Estilo del Filtro
+          </h2>
+          
+          <div class="space-y-2">
+            <!-- Fila 1: Composición de imagen (cómo se recorta/muestra) -->
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Composición</p>
+            <div class="grid grid-cols-3 gap-2">
+              <button id="btnLayoutHalf" class="layout-btn active bg-orangeCircuit/10 border-2 border-orangeCircuit text-cream font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-gradient-to-r from-burgundy to-orangeCircuit"></span>
+                Media Imagen
+              </button>
+              <button id="btnLayoutEyes" class="layout-btn border-2 border-burgundy-light/60 text-gray-400 hover:text-white hover:border-orangeCircuit/50 font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
+                <span class="w-4 h-1.5 rounded-sm bg-orangeCircuit"></span>
+                Línea Horizontal
+              </button>
+              <button id="btnLayoutFull" class="layout-btn border-2 border-burgundy-light/60 text-gray-400 hover:text-white hover:border-orangeCircuit/50 font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-orangeCircuit"></span>
+                Filtro Global
+              </button>
+            </div>
+
+            <!-- Fila 2: Efecto de color (se combina con la composición) -->
+            <p class="text-[10px] text-gray-500 uppercase tracking-wider mt-3 mb-1">Efecto de color</p>
+            <div class="grid grid-cols-2 gap-2">
+              <button id="btnEffectGlitch" class="effect-btn border-2 border-burgundy-light/60 text-gray-400 hover:text-white hover:border-orangeCircuit/50 font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-gradient-to-tr from-orangeCircuit-soft via-burgundy to-cream"></span>
+                RGB Glitch
+              </button>
+              <button id="btnEffectTerminal" class="effect-btn border-2 border-burgundy-light/60 text-gray-400 hover:text-white hover:border-orangeCircuit/50 font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
+                <span class="w-4 h-4 rounded-full bg-orangeCircuit border border-burgundy-light"></span>
+                Terminal Ámbar
+              </button>
+            </div>
+            <p class="text-[10px] text-gray-500 text-center mt-1">El efecto de color se aplica sobre la composición elegida</p>
+          </div>
+
+          <!-- Ajustes Dinámicos de la Composición (Mover Media Imagen o Línea Horizontal) -->
+          <div id="compositionAdjustSection" class="mt-4 border-t border-burgundy-light/40 pt-3 space-y-3">
+            <!-- Control para Media Imagen -->
+            <div id="controlHalfSection" class="space-y-1.5">
+              <div class="flex justify-between text-xs text-gray-400">
+                <span class="flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-orangeCircuit" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                  Mover corte de Media Imagen
+                </span>
+                <span id="halfSplitVal" class="text-orangeCircuit-soft font-mono font-bold">54%</span>
+              </div>
+              <input type="range" id="halfSplitSlider" min="10" max="90" step="1" value="54" class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
+            </div>
+
+            <!-- Control para Línea Horizontal -->
+            <div id="controlEyesSection" class="space-y-2 hidden">
+              <div>
+                <div class="flex justify-between text-xs text-gray-400 mb-1">
+                  <span class="flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5 text-orangeCircuit" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                    Posición vertical de la franja (Y)
+                  </span>
+                  <span id="eyesPosVal" class="text-orangeCircuit-soft font-mono font-bold">35%</span>
+                </div>
+                <input type="range" id="eyesPosSlider" min="5" max="85" step="1" value="35" class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
+              </div>
+              <div>
+                <div class="flex justify-between text-xs text-gray-400 mb-1">
+                  <span>Alto / Grosor de la franja</span>
+                  <span id="eyesHeightVal" class="text-orangeCircuit-soft font-mono font-bold">15%</span>
+                </div>
+                <input type="range" id="eyesHeightSlider" min="5" max="40" step="1" value="15" class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
+              </div>
+            </div>
+          </div>
+
+          <!-- Ajustes Avanzados de la Foto -->
+          <div class="mt-5 border-t border-burgundy-light/40 pt-4 space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Ajustar Posición de Imagen</span>
+              <button id="btnResetAdjust" class="text-xs text-orangeCircuit-soft hover:text-cream font-medium">Restablecer</button>
+            </div>
+            
+            <div>
+              <div class="flex justify-between text-xs text-gray-400 mb-1">
+                <span>Escala (Zoom)</span>
+                <span id="scaleVal">1.0x</span>
+              </div>
+              <input type="range" id="scaleSlider" min="0.1" max="3" step="0.05" value="1" class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <div class="flex justify-between text-xs text-gray-400 mb-1">
+                  <span>Desplazar X</span>
+                  <span id="offsetXVal">0px</span>
+                </div>
+                <input type="range" id="offsetXSlider" min="-500" max="500" step="1" value="0" class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
+              </div>
+              <div>
+                <div class="flex justify-between text-xs text-gray-400 mb-1">
+                  <span>Desplazar Y</span>
+                  <span id="offsetYVal">0px</span>
+                </div>
+                <input type="range" id="offsetYSlider" min="-500" max="500" step="1" value="0" class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Columna Derecha: Vista Previa, Carga Integrada y Descarga -->
+      <section class="order-1 lg:order-2 lg:col-span-7 flex flex-col items-center justify-start space-y-4 sm:space-y-6">
+        
+        <!-- Input de archivo invisible accesible -->
+        <input type="file" id="imageInput" accept="image/*" class="hidden">
+
+        <!-- Contenedor del Lienzo con aspecto de alta definición y Carga Integrada -->
+        <div class="w-full bg-burgundy-dark border border-burgundy-light/50 rounded-2xl p-4 sm:p-6 shadow-xl flex flex-col items-center">
+          <div class="flex justify-between items-center w-full mb-3 sm:mb-4">
+            <h3 class="text-xs sm:text-sm font-semibold text-cream font-tech tracking-wider uppercase flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-orangeCircuit"></span>
+              Vista Previa y Foto
+            </h3>
+            <div class="flex items-center gap-2">
+              <button type="button" id="btnChangePhoto" class="text-[11px] bg-burgundy-deep hover:bg-burgundy-light border border-burgundy-light/70 text-orangeCircuit-soft hover:text-white px-2.5 py-1 rounded-lg transition-colors font-medium flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-orangeCircuit" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                <span>Subir / Cambiar foto</span>
+              </button>
+              <span class="text-[11px] sm:text-xs px-2 py-0.5 sm:py-1 rounded bg-burgundy-deep border border-burgundy-light/60 text-gray-400 font-mono hidden sm:inline-block">1080 × 1080 px</span>
+            </div>
+          </div>
+
+          <!-- Canvas Wrapper con relación de aspecto cuadrada perfecta y receptor de Drag & Drop -->
+          <div id="canvasWrapper" class="relative w-full max-w-[480px] aspect-square rounded-xl overflow-hidden border-2 border-dashed border-burgundy-light/80 hover:border-orangeCircuit/80 bg-burgundy-deep shadow-inner cursor-grab active:cursor-grabbing group transition-all">
+            <canvas id="posterCanvas" class="w-full h-full block touch-none"></canvas>
+            
+            <!-- Mensaje flotante cuando no hay imagen cargada (Tocar o arrastrar para subir) -->
+            <div id="noImageOverlay" class="absolute inset-0 bg-burgundy-deep/95 flex flex-col items-center justify-center p-6 text-center cursor-pointer pointer-events-auto transition-all duration-300 hover:bg-burgundy-deep/90">
+              <div class="w-16 h-16 rounded-full bg-orangeCircuit/10 border border-orangeCircuit/30 flex items-center justify-center mb-3 text-orangeCircuit-soft group-hover:scale-105 transition-transform">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+              </div>
+              <p class="text-base font-bold text-white mb-1">Arrastra y suelta tu foto aquí</p>
+              <p class="text-xs text-orangeCircuit-soft font-medium mb-1">o toca para seleccionarla de tu galería</p>
+              <p class="text-[10px] text-gray-500 mb-3">Formatos soportados: JPG, PNG, WebP</p>
+              <span class="text-xs font-bold text-white bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft px-4 py-2 rounded-xl shadow-lg shadow-orangeCircuit/20 inline-flex items-center gap-1.5">
+                📷 Elegir Fotografía
+              </span>
+            </div>
+            
+            <!-- Overlay de Ayuda visual sutil al pasar el cursor o en móvil -->
+            <div class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-burgundy-deep/90 backdrop-blur-md text-[10px] sm:text-[11px] text-cream px-3 py-1.5 rounded-full pointer-events-none opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-1.5 whitespace-nowrap">
+              <svg class="w-3.5 h-3.5 text-orangeCircuit" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 013 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1"></path>
+              </svg>
+              Arrastra o pellizca para mover la foto
+            </div>
+          </div>
+
+          <!-- Acciones Rápidas del Canvas -->
+          <div class="w-full max-w-[480px] mt-5 space-y-3">
+            <!-- Selector de formato PNG / JPG -->
+            <div class="flex items-center justify-between bg-burgundy-deep/70 border border-burgundy-light/40 rounded-xl px-4 py-2.5">
+              <span class="text-xs font-semibold text-gray-300 flex items-center gap-1.5">
+                <svg class="w-4 h-4 text-orangeCircuit" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                Formato de descarga:
+              </span>
+              <div class="inline-flex p-1 rounded-lg bg-burgundy border border-burgundy-light/60 text-xs font-bold gap-1">
+                <button type="button" id="btnFormatPng" class="px-3 py-1 rounded-md transition-all bg-orangeCircuit text-white shadow-sm flex items-center gap-1">
+                  <span>PNG</span>
+                  <span class="text-[9px] opacity-80 font-mono">HD</span>
+                </button>
+                <button type="button" id="btnFormatJpg" class="px-3 py-1 rounded-md transition-all text-gray-400 hover:text-white flex items-center gap-1">
+                  <span>JPG</span>
+                  <span class="text-[9px] opacity-80 font-mono">95%</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Botón principal de descarga -->
+            <button id="btnDownload" class="w-full bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft hover:from-orangeCircuit/90 hover:to-orangeCircuit-soft/90 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg shadow-orangeCircuit/20 hover:shadow-orangeCircuit/30 flex items-center justify-center gap-2 text-sm">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              </svg>
+              <span id="downloadBtnText">Descargar en PNG (Alta Definición)</span>
+            </button>
+
+            <!-- Alerta informativa de privacidad y seguridad local -->
+            <p class="text-[11px] text-gray-400 mt-2 flex items-start gap-2 bg-burgundy-deep/60 p-3 rounded-xl border border-burgundy-light/40">
+              <svg class="w-4 h-4 text-orangeCircuit-soft shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>Tus datos y fotos están seguros. No se almacenan ni suben a ningún servidor. Todo el procesamiento se realiza en tu navegador web.</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Guías para Compartir en Redes -->
+        <div class="w-full max-w-[530px] border border-orangeCircuit/40 bg-gradient-to-br from-burgundy-dark/95 via-burgundy-deep/90 to-[#180408] p-4 sm:p-5 rounded-2xl shadow-xl shadow-black/40 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-orangeCircuit/10 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="flex items-center gap-2 mb-2.5">
+            <span class="p-1.5 rounded-lg bg-orangeCircuit/20 text-orangeCircuit border border-orangeCircuit/30 shrink-0">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+              </svg>
+            </span>
+            <span class="font-bold text-cream tracking-wide text-sm font-tech">Consejo para compartir:</span>
+          </div>
+
+          <div class="space-y-2 text-xs text-gray-200 pl-0.5">
+            <p class="flex items-start gap-2">
+              <span class="text-orangeCircuit font-bold shrink-0 mt-0.5">•</span>
+              <span>Sube tu imagen generada a tu perfil de redes sociales.</span>
+            </p>
+            <p class="flex items-start gap-2">
+              <span class="text-orangeCircuit font-bold shrink-0 mt-0.5">•</span>
+              <span>Usa los hashtags oficiales <strong class="text-orangeCircuit-soft font-bold font-mono tracking-wide">#RELOAD #ELAD26</strong> para ganar visibilidad.</span>
+            </p>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Modal de Éxito / Feedback Dinámico -->
+    <div id="successModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
+      <div class="bg-burgundy-dark border border-burgundy-light rounded-2xl max-w-md w-full p-6 text-center shadow-2xl relative">
+        <div class="w-16 h-16 bg-orangeCircuit/10 border border-orangeCircuit/30 rounded-full flex items-center justify-center mx-auto mb-4 text-cream">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold font-tech text-white mb-1">¡Poster Listo para Compartir!</h3>
+        <p class="text-xs text-gray-400 mb-5">Tu imagen se ha exportado con éxito en alta resolución.</p>
+        
+        <div class="bg-burgundy-deep border border-orangeCircuit/30 p-3.5 rounded-xl text-xs text-gray-200 text-left space-y-2 mb-6">
+          <p class="font-semibold text-cream flex items-center gap-1.5 font-tech text-sm">
+            <span class="text-orangeCircuit">💡</span> Consejo para compartir:
+          </p>
+          <p class="text-gray-300 pl-1">• Sube tu imagen generada a tu perfil de redes sociales.</p>
+          <p class="text-gray-300 pl-1">• Usa los hashtags oficiales <strong class="text-orangeCircuit-soft font-bold font-mono">#RELOAD #ELAD26</strong> para ganar visibilidad.</p>
+        </div>
+
+        <button id="btnCloseModal" class="w-full bg-burgundy-light hover:bg-burgundy text-white font-semibold py-3 px-4 rounded-xl transition-colors text-sm">
+          Entendido, volver al editor
+        </button>
+      </div>
+    </div>
+
+    <!-- Pie de Página -->
+    <footer class="border-t border-burgundy-deep bg-[#130205] py-6 px-4 text-center text-xs text-gray-600 mt-auto">
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+        <p>© 2026 RELOAD. Todos los derechos reservados.</p>
+        <p class="flex items-center gap-1.5">
+          Diseñado con el corazón para impulsar la representación en Tech 💻✨
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- LÓGICA DE CONTROL DEL CANVAS, ACCESO E INTERACCIÓN -->
+  <script>
+    // ================= BASE DE DATOS DE HASHES ADMINISTRATIVOS (SHA-256) =================
+    const adminDatabase = {
+      "1a839c29d73c5272ce7dcb60c22e51e41353d7c5e8d0385ba2d3be710904ab8e": { name: "SOFÍA MARTÍNEZ", handle: "@sofia_reload", defaultRole: "ORGANIZADOR" },
+      "11ddc372b51a465686f101da39d8e651b330ef7c76c4454baa62309e5003afd2": { name: "LUCAS CONTRERAS", handle: "@lucas_staff", defaultRole: "STAFF" },
+      "809cb2dd0c8f5615704976565777a8543ecbd01a3bb296efcbd2510e52a2b8f6": { name: "EQUIPO DIRECTIVO RAD", handle: "@redlatdigital", defaultRole: "ORGANIZADOR" }
+    };
+
+    // Referencias de Elementos de Acceso
+    const accessGate = document.getElementById('accessGate');
+    const mainApp = document.getElementById('mainApp');
+    const gateEmail = document.getElementById('gateEmail');
+    const btnVerifyEmail = document.getElementById('btnVerifyEmail');
+    const btnCloseAccessGate = document.getElementById('btnCloseAccessGate');
+    const gateErrorMessage = document.getElementById('gateErrorMessage');
+    const loginForm = document.getElementById('loginForm');
+
+    // Referencias de la Cuenta en la App Principal
+    const userBadgeEmail = document.getElementById('userBadgeEmail');
+    const userBadgeTier = document.getElementById('userBadgeTier');
+    const btnChangeAccount = document.getElementById('btnChangeAccount');
+
+    // Referencias del Canvas y Editores
+    const imageInput = document.getElementById('imageInput');
+    const nameInput = document.getElementById('nameInput');
+    const handleInput = document.getElementById('handleInput');
+    const roleInput = document.getElementById('roleInput');
+    
+    // Controles Deslizantes de Posición
+    const scaleSlider = document.getElementById('scaleSlider');
+    const offsetXSlider = document.getElementById('offsetXSlider');
+    const offsetYSlider = document.getElementById('offsetYSlider');
+    const scaleVal = document.getElementById('scaleVal');
+    const offsetXVal = document.getElementById('offsetXVal');
+    const offsetYVal = document.getElementById('offsetYVal');
+    const btnResetAdjust = document.getElementById('btnResetAdjust');
+    
+    // Canvas y Descargas
+    const canvas = document.getElementById('posterCanvas');
+    const ctx = canvas.getContext('2d');
+    const noImageOverlay = document.getElementById('noImageOverlay');
+    const btnDownload = document.getElementById('btnDownload');
+    
+    // Modal
+const successModal = document.getElementById('successModal');
+    const btnCloseModal = document.getElementById('btnCloseModal');
+
+    // Dimensiones internas del Canvas (Optimizadas para exportación HD)
+    const CANVAS_WIDTH = 1080;
+    const CANVAS_HEIGHT = 1080;
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
+
+    // Estado de la Imagen y Composición
+    let userImage = null;
+    let selectedLayout = 'half';        // 'half', 'eyes', 'full'
+    let selectedColorEffect = 'none';   // 'none', 'glitch', 'terminal'
+
+    // Parámetros de posición ajustable para la composición
+    let halfSplitPercent = 54;   // Posición del corte en Media Imagen (10% a 90%)
+    let eyesPosPercent = 35;     // Posición Y de la Línea Horizontal (5% a 85%)
+    let eyesHeightPercent = 15;  // Altura de la Línea Horizontal (5% a 40%)
+
+    // Elementos DOM de los controles de composición
+    const compositionAdjustSection = document.getElementById('compositionAdjustSection');
+    const controlHalfSection = document.getElementById('controlHalfSection');
+    const controlEyesSection = document.getElementById('controlEyesSection');
+    const halfSplitSlider = document.getElementById('halfSplitSlider');
+    const halfSplitVal = document.getElementById('halfSplitVal');
+    const eyesPosSlider = document.getElementById('eyesPosSlider');
+    const eyesPosVal = document.getElementById('eyesPosVal');
+    const eyesHeightSlider = document.getElementById('eyesHeightSlider');
+    const eyesHeightVal = document.getElementById('eyesHeightVal');
+
+    // Transformación de la imagen del usuario
+    let imgScale = 1.0;
+    let imgOffsetX = 0;
+    let imgOffsetY = 0;
+    
+    // Variables para interacción táctil/arrastre en canvas
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    // Valores dinámicos por defecto
+    const defaultData = {
+      name: "RED DE ANTROPOLOGÍA DIGITAL",
+      handle: "@redlatdigital",
+      role: "PARTICIPANTE"
+    };
+
+    let currentSession = {
+      verifiedEmail: "",
+      isAdminVerified: false,
+      name: defaultData.name,
+      handle: defaultData.handle,
+      role: defaultData.role
+    };
+
+    // Inicialización del panel de texto por defecto
+    nameInput.value = currentSession.name;
+    handleInput.value = currentSession.handle;
+
+    // ================= CONTROL DE ACCESO Y VERIFICACIÓN =================
+
+    function validateEmailFormat(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashHex;
+    }
+
+    async function verifyAdmin(email) {
+      const cleanEmail = email.trim().toLowerCase();
+      const hash = await sha256(cleanEmail);
+      const matchedAdmin = adminDatabase[hash];
+
+      if (matchedAdmin) {
+        currentSession.verifiedEmail = cleanEmail;
+        currentSession.isAdminVerified = true;
+        currentSession.name = matchedAdmin.name;
+        currentSession.handle = matchedAdmin.handle;
+        currentSession.role = matchedAdmin.defaultRole;
+
+        // Desbloquear opciones de rol admin
+        unlockAdminRoles(matchedAdmin.defaultRole);
+
+        // Actualizar inputs del panel
+        nameInput.value = currentSession.name;
+        handleInput.value = currentSession.handle;
+
+        // Actualizar interfaz
+        updateAdminUI();
+
+        // Ocultar modal
+        closeGateModal();
+        
+        render();
+      } else {
+        gateErrorMessage.textContent = "El correo electrónico no pertenece al Staff u Organizadores.";
+        gateErrorMessage.classList.remove('hidden');
+        loginForm.classList.add('animate-shake');
+        setTimeout(() => loginForm.classList.remove('animate-shake'), 500);
+      }
+    }
+
+    function unlockAdminRoles(selectedRole) {
+      const lockedOpt = roleInput.querySelector('option[value="LOCKED"]');
+      if (lockedOpt) {
+        lockedOpt.remove();
+      }
+
+      if (!roleInput.querySelector('option[value="ORGANIZADOR"]')) {
+        const optOrg = document.createElement("option");
+        optOrg.value = "ORGANIZADOR";
+        optOrg.textContent = "ORGANIZADOR";
+        roleInput.appendChild(optOrg);
+      }
+      if (!roleInput.querySelector('option[value="STAFF"]')) {
+        const optStaff = document.createElement("option");
+        optStaff.value = "STAFF";
+        optStaff.textContent = "STAFF";
+        roleInput.appendChild(optStaff);
+      }
+
+      roleInput.value = selectedRole;
+    }
+
+    function lockAdminRoles() {
+      const optOrg = roleInput.querySelector('option[value="ORGANIZADOR"]');
+      if (optOrg) optOrg.remove();
+      const optStaff = roleInput.querySelector('option[value="STAFF"]');
+      if (optStaff) optStaff.remove();
+
+      if (!roleInput.querySelector('option[value="LOCKED"]')) {
+        const optLock = document.createElement("option");
+        optLock.value = "LOCKED";
+        optLock.textContent = "🔒 ORGANIZADOR / STAFF";
+        roleInput.appendChild(optLock);
+      }
+
+      roleInput.value = "PARTICIPANTE";
+      currentSession.role = "PARTICIPANTE";
+      currentSession.isAdminVerified = false;
+      currentSession.verifiedEmail = "";
+      
+      currentSession.name = defaultData.name;
+      currentSession.handle = defaultData.handle;
+      nameInput.value = defaultData.name;
+      handleInput.value = defaultData.handle;
+
+      updateAdminUI();
+      render();
+    }
+
+    function openGateModal() {
+      accessGate.classList.remove('hidden');
+      gateEmail.value = "";
+      gateErrorMessage.classList.add('hidden');
+    }
+
+    function closeGateModal() {
+      accessGate.classList.add('hidden');
+    }
+
+    function updateAdminUI() {
+      if (currentSession.isAdminVerified) {
+        userBadgeEmail.textContent = currentSession.verifiedEmail;
+        userBadgeTier.textContent = "ORGANIZACIÓN / STAFF";
+        userBadgeTier.className = "text-[9px] text-emerald-400 font-bold uppercase tracking-wider";
+        btnChangeAccount.textContent = "Cerrar Sesión Staff";
+        btnChangeAccount.className = "text-red-400 hover:text-red-300 text-[11px] font-semibold border border-red-500/20 bg-red-500/5 px-2.5 py-1.5 rounded-lg transition-colors";
+      } else {
+        userBadgeEmail.textContent = "acceso-publico@reload.com";
+        userBadgeTier.textContent = "CREDENCIAL PÚBLICA";
+        userBadgeTier.className = "text-[9px] text-pink-500 font-bold uppercase tracking-wider";
+        btnChangeAccount.textContent = "Verificar Staff 🔒";
+        btnChangeAccount.className = "text-pink-400 hover:text-pink-300 text-[11px] font-semibold border border-pink-500/20 bg-pink-500/5 px-2.5 py-1.5 rounded-lg transition-colors";
+      }
+    }
+
+    // Inicializar UI en carga
+    updateAdminUI();
+
+    // Eventos del modal
+    btnVerifyEmail.addEventListener('click', () => {
+      const emailVal = gateEmail.value;
+      if (!validateEmailFormat(emailVal)) {
+        gateErrorMessage.textContent = "Introduce un formato de correo electrónico válido.";
+        gateErrorMessage.classList.remove('hidden');
+        loginForm.classList.add('animate-shake');
+        setTimeout(() => loginForm.classList.remove('animate-shake'), 500);
+        return;
+      }
+      gateErrorMessage.classList.add('hidden');
+      verifyAdmin(emailVal);
+    });
+
+    gateEmail.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        btnVerifyEmail.click();
+      }
+    });
+
+    btnCloseAccessGate.addEventListener('click', closeGateModal);
+
+    btnChangeAccount.addEventListener('click', () => {
+      if (currentSession.isAdminVerified) {
+        lockAdminRoles();
+      } else {
+        openGateModal();
+      }
+    });
+
+
+    // ================= PROCESAMIENTO DE IMÁGENES =================
+
+    clearCanvas();
+
+    const canvasWrapper = document.getElementById('canvasWrapper');
+    const btnChangePhoto = document.getElementById('btnChangePhoto');
+
+    if (btnChangePhoto) {
+      btnChangePhoto.addEventListener('click', () => {
+        imageInput.click();
+      });
+    }
+
+    imageInput.addEventListener('change', handleImageUpload);
+
+    function processImageFile(file) {
+      if (!file || !file.type.startsWith('image/')) {
+        alert('Por favor sube un archivo de imagen válido (JPG, PNG, WebP).');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          userImage = img;
+          noImageOverlay.classList.add('opacity-0');
+          setTimeout(() => noImageOverlay.classList.add('hidden'), 300);
+          resetTransformation(img);
+          render();
+          if (window.innerWidth < 1024) {
+            canvas.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleImageUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (file) {
+        processImageFile(file);
+      }
+    }
+
+    // Configurar zona de arrastrar y soltar (Dropzone en Canvas)
+    if (canvasWrapper) {
+      ['dragenter', 'dragover'].forEach(eventName => {
+        canvasWrapper.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          canvasWrapper.classList.add('border-orangeCircuit', 'bg-orangeCircuit/10', 'ring-2', 'ring-orangeCircuit/60');
+        });
+      });
+
+      ['dragleave', 'dragend'].forEach(eventName => {
+        canvasWrapper.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          canvasWrapper.classList.remove('border-orangeCircuit', 'bg-orangeCircuit/10', 'ring-2', 'ring-orangeCircuit/60');
+        });
+      });
+
+      canvasWrapper.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        canvasWrapper.classList.remove('border-orangeCircuit', 'bg-orangeCircuit/10', 'ring-2', 'ring-orangeCircuit/60');
+        
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          processImageFile(e.dataTransfer.files[0]);
+        }
+      });
+    }
+
+    // Soporte para Pegar imágenes (Ctrl + V / Paste) directamente
+    window.addEventListener('paste', (e) => {
+      if (e.clipboardData && e.clipboardData.files && e.clipboardData.files.length > 0) {
+        const file = e.clipboardData.files[0];
+        if (file.type.startsWith('image/')) {
+          processImageFile(file);
+        }
+      }
+    });
+
+    function resetTransformation(img) {
+      if (!img) return;
+      
+      const scaleX = CANVAS_WIDTH / img.width;
+      const scaleY = CANVAS_HEIGHT / img.height;
+      imgScale = Math.max(scaleX, scaleY);
+      
+      imgOffsetX = 0;
+      imgOffsetY = 0;
+
+      scaleSlider.value = imgScale.toFixed(2);
+      scaleSlider.min = (imgScale * 0.25).toFixed(2);
+      scaleSlider.max = (imgScale * 3).toFixed(2);
+      
+      offsetXSlider.value = 0;
+      offsetYSlider.value = 0;
+      
+      updateSliderLabels();
+    }
+
+    function updateSliderLabels() {
+      scaleVal.textContent = parseFloat(scaleSlider.value).toFixed(2) + 'x';
+      offsetXVal.textContent = parseInt(offsetXSlider.value) + 'px';
+      offsetYVal.textContent = parseInt(offsetYSlider.value) + 'px';
+    }
+
+    nameInput.addEventListener('input', render);
+    handleInput.addEventListener('input', render);
+    
+    roleInput.addEventListener('change', (e) => {
+      const val = e.target.value;
+      if (val === "LOCKED") {
+        roleInput.value = currentSession.role;
+        openGateModal();
+      } else if ((val === "ORGANIZADOR" || val === "STAFF") && !currentSession.isAdminVerified) {
+        console.warn("Intento de bypass detectado: Rol administrativo no verificado.");
+        roleInput.value = "PARTICIPANTE";
+        currentSession.role = "PARTICIPANTE";
+        openGateModal();
+        render();
+      } else {
+        currentSession.role = val;
+        render();
+      }
+    });
+
+    scaleSlider.addEventListener('input', (e) => {
+      imgScale = parseFloat(e.target.value);
+      updateSliderLabels();
+      render();
+    });
+
+    offsetXSlider.addEventListener('input', (e) => {
+      imgOffsetX = parseInt(e.target.value);
+      updateSliderLabels();
+      render();
+    });
+
+    offsetYSlider.addEventListener('input', (e) => {
+      imgOffsetY = parseInt(e.target.value);
+      updateSliderLabels();
+      render();
+    });
+
+    btnResetAdjust.addEventListener('click', () => {
+      if (userImage) {
+        resetTransformation(userImage);
+      }
+      halfSplitPercent = 54;
+      eyesPosPercent = 35;
+      eyesHeightPercent = 15;
+      halfSplitSlider.value = 54;
+      eyesPosSlider.value = 35;
+      eyesHeightSlider.value = 15;
+      halfSplitVal.textContent = '54%';
+      eyesPosVal.textContent = '35%';
+      eyesHeightVal.textContent = '15%';
+      render();
+    });
+
+    // ─── CONTROL DE FILTROS: dos grupos independientes ───
+
+    function updateCompositionControlsUI() {
+      if (selectedLayout === 'half') {
+        compositionAdjustSection.classList.remove('hidden');
+        controlHalfSection.classList.remove('hidden');
+        controlEyesSection.classList.add('hidden');
+      } else if (selectedLayout === 'eyes') {
+        compositionAdjustSection.classList.remove('hidden');
+        controlHalfSection.classList.add('hidden');
+        controlEyesSection.classList.remove('hidden');
+      } else {
+        compositionAdjustSection.classList.add('hidden');
+      }
+    }
+
+    // Sliders de movimiento de la composición
+    halfSplitSlider.addEventListener('input', (e) => {
+      halfSplitPercent = parseInt(e.target.value);
+      halfSplitVal.textContent = halfSplitPercent + '%';
+      render();
+    });
+
+    eyesPosSlider.addEventListener('input', (e) => {
+      eyesPosPercent = parseInt(e.target.value);
+      eyesPosVal.textContent = eyesPosPercent + '%';
+      render();
+    });
+
+    eyesHeightSlider.addEventListener('input', (e) => {
+      eyesHeightPercent = parseInt(e.target.value);
+      eyesHeightVal.textContent = eyesHeightPercent + '%';
+      render();
+    });
+
+    // Grupo 1: Composición (layout)
+    const layoutButtons = [
+      { btn: document.getElementById('btnLayoutHalf'), type: 'half' },
+      { btn: document.getElementById('btnLayoutEyes'), type: 'eyes' },
+      { btn: document.getElementById('btnLayoutFull'), type: 'full' },
+    ];
+
+    layoutButtons.forEach(item => {
+      item.btn.addEventListener('click', () => {
+        layoutButtons.forEach(i => {
+          i.btn.classList.remove('active', 'bg-orangeCircuit/10', 'border-orangeCircuit', 'text-cream');
+          i.btn.classList.add('border-burgundy-light/60', 'text-gray-400');
+        });
+        item.btn.classList.add('active', 'bg-orangeCircuit/10', 'border-orangeCircuit', 'text-cream');
+        item.btn.classList.remove('border-burgundy-light/60', 'text-gray-400');
+        selectedLayout = item.type;
+        updateCompositionControlsUI();
+        render();
+      });
+    });
+
+    // Grupo 2: Efecto de color (toggle: clic de nuevo desactiva)
+    const effectButtons = [
+      { btn: document.getElementById('btnEffectGlitch'),    type: 'glitch' },
+      { btn: document.getElementById('btnEffectTerminal'),  type: 'terminal' },
+    ];
+
+    effectButtons.forEach(item => {
+      item.btn.addEventListener('click', () => {
+        const alreadyActive = item.btn.classList.contains('active');
+        // Desactivar todos los efectos
+        effectButtons.forEach(i => {
+          i.btn.classList.remove('active', 'bg-orangeCircuit/10', 'border-orangeCircuit', 'text-cream');
+          i.btn.classList.add('border-burgundy-light/60', 'text-gray-400');
+        });
+        if (!alreadyActive) {
+          // Activar el seleccionado
+          item.btn.classList.add('active', 'bg-orangeCircuit/10', 'border-orangeCircuit', 'text-cream');
+          item.btn.classList.remove('border-burgundy-light/60', 'text-gray-400');
+          selectedColorEffect = item.type;
+        } else {
+          // Clic sobre el ya activo: desactivar (sin efecto de color)
+          selectedColorEffect = 'none';
+        }
+        render();
+      });
+    });
+
+
+
+    function clearCanvas() {
+      const grad = ctx.createLinearGradient(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      grad.addColorStop(0, '#4A0E1A');
+      grad.addColorStop(1, '#1F0409');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    }
+
+    // ARRASTRE Y PELLIZCO (PINCH-TO-ZOOM) MULTITÁCTIL EN EL CANVAS
+    let initialPinchDistance = null;
+    let initialPinchScale = 1.0;
+
+    // Permitir tocar el overlay para subir foto directamente en móvil
+    noImageOverlay.addEventListener('click', () => {
+      imageInput.click();
+    });
+
+    function getCanvasCoordinates(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
+      const clientY = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
+      
+      const scaleX = CANVAS_WIDTH / rect.width;
+      const scaleY = CANVAS_HEIGHT / rect.height;
+      
+      return {
+        x: (clientX - rect.left) * scaleX,
+        y: (clientY - rect.top) * scaleY
+      };
+    }
+
+    function getTouchDistance(touches) {
+      if (touches.length < 2) return 0;
+      const dx = touches[0].clientX - touches[1].clientX;
+      const dy = touches[0].clientY - touches[1].clientY;
+      return Math.hypot(dx, dy);
+    }
+
+    function handleStart(e) {
+      if (!userImage) return;
+
+      if (e.touches && e.touches.length >= 2) {
+        // Gesto de pellizco con 2 dedos
+        isDragging = false;
+        initialPinchDistance = getTouchDistance(e.touches);
+        initialPinchScale = imgScale;
+        return;
+      }
+
+      isDragging = true;
+      initialPinchDistance = null;
+      const coords = getCanvasCoordinates(e);
+      startX = coords.x - imgOffsetX;
+      startY = coords.y - imgOffsetY;
+    }
+
+    function handleMove(e) {
+      if (!userImage) return;
+
+      // Zoom con dos dedos (Pinch-to-zoom)
+      if (e.touches && e.touches.length >= 2 && initialPinchDistance) {
+        if (e.cancelable) e.preventDefault();
+        const currentDist = getTouchDistance(e.touches);
+        if (currentDist > 0 && initialPinchDistance > 0) {
+          const factor = currentDist / initialPinchDistance;
+          let newScale = initialPinchScale * factor;
+          const minS = parseFloat(scaleSlider.min) || 0.1;
+          const maxS = parseFloat(scaleSlider.max) || 3.0;
+          imgScale = Math.min(Math.max(newScale, minS), maxS);
+          scaleSlider.value = imgScale.toFixed(2);
+          updateSliderLabels();
+          render();
+        }
+        return;
+      }
+
+      if (!isDragging) return;
+      if (e.cancelable) e.preventDefault();
+      const coords = getCanvasCoordinates(e);
+      
+      imgOffsetX = coords.x - startX;
+      imgOffsetY = coords.y - startY;
+
+      offsetXSlider.value = imgOffsetX;
+      offsetYSlider.value = imgOffsetY;
+      updateSliderLabels();
+      
+      render();
+    }
+
+    function handleEnd(e) {
+      if (e && e.touches && e.touches.length === 1) {
+        // Pasó de dos dedos a un dedo
+        isDragging = true;
+        initialPinchDistance = null;
+        const coords = getCanvasCoordinates(e);
+        startX = coords.x - imgOffsetX;
+        startY = coords.y - imgOffsetY;
+      } else {
+        isDragging = false;
+        initialPinchDistance = null;
+      }
+    }
+
+    canvas.addEventListener('mousedown', handleStart);
+    canvas.addEventListener('mousemove', handleMove);
+    window.addEventListener('mouseup', handleEnd);
+
+    canvas.addEventListener('touchstart', handleStart, { passive: false });
+    canvas.addEventListener('touchmove', handleMove, { passive: false });
+    window.addEventListener('touchend', handleEnd);
+
+
+    // ================= ALGORITMO DE RENDERIZADO DEL POSTER =================
+    function render() {
+      clearCanvas();
+
+      // 1. Imagen del usuario con parámetros aplicados
+      if (userImage) {
+        ctx.save();
+        ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+        ctx.translate(imgOffsetX, imgOffsetY);
+        const w = userImage.width * imgScale;
+        const h = userImage.height * imgScale;
+        ctx.drawImage(userImage, -w / 2, -h / 2, w, h);
+        ctx.restore();
+      }
+
+      // Capa de oscurecimiento base — solo dentro de la zona de composición
+      // La imagen fuera de la composición queda intacta
+      if (selectedLayout === 'half') {
+        const splitX = Math.floor(CANVAS_WIDTH * (halfSplitPercent / 100));
+        ctx.fillStyle = "rgba(10, 9, 15, 0.15)";
+        ctx.fillRect(splitX, 0, CANVAS_WIDTH - splitX, CANVAS_HEIGHT);
+      } else if (selectedLayout === 'eyes') {
+        const eyeY = Math.floor(CANVAS_HEIGHT * (eyesPosPercent / 100));
+        const eyeH = Math.floor(CANVAS_HEIGHT * (eyesHeightPercent / 100));
+        ctx.fillStyle = "rgba(10, 9, 15, 0.15)";
+        ctx.fillRect(0, eyeY, CANVAS_WIDTH, eyeH);
+      } else if (selectedLayout === 'full') {
+        ctx.fillStyle = "rgba(10, 9, 15, 0.15)";
+        ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      }
+
+      // 2. Calcular la región de clip según la composición activa
+      let clipRegion = null; // null = todo el canvas
+      if (selectedLayout === 'half') {
+        const splitX = Math.floor(CANVAS_WIDTH * (halfSplitPercent / 100));
+        clipRegion = {
+          x: splitX,
+          y: 0,
+          w: CANVAS_WIDTH - splitX,
+          h: CANVAS_HEIGHT
+        };
+      } else if (selectedLayout === 'eyes') {
+        const eyeY = Math.floor(CANVAS_HEIGHT * (eyesPosPercent / 100));
+        const eyeH = Math.floor(CANVAS_HEIGHT * (eyesHeightPercent / 100));
+        clipRegion = { x: 0, y: eyeY, w: CANVAS_WIDTH, h: eyeH };
+      } else if (selectedLayout === 'full') {
+        clipRegion = { x: 0, y: 0, w: CANVAS_WIDTH, h: CANVAS_HEIGHT };
+      }
+
+      // 3. Aplicar efecto de color solo dentro de la región de composición
+      if (selectedColorEffect === 'glitch') {
+        drawGlitchFilter(clipRegion);
+      } else if (selectedColorEffect === 'terminal') {
+        drawTerminalFilter(clipRegion);
+      }
+
+      // 4. Composición de imagen (overlay encima del efecto)
+      if (selectedLayout === 'half') {
+        drawHalfFaceFilter();
+      } else if (selectedLayout === 'eyes') {
+        drawEyesFilter();
+      } else if (selectedLayout === 'full') {
+        drawFullCyberFilter();
+      }
+
+      // 5. Marcos estéticos y de calibración
+      drawEventGridAndFrame();
+
+      // 6. Capa de textos y marcas de agua de RELOAD
+      drawTypographyAndBadges();
+    }
+
+
+
+    // --- IMPLEMENTACIÓN DE FILTROS ---
+
+    function drawHalfFaceFilter() {
+      const splitX = Math.floor(CANVAS_WIDTH * (halfSplitPercent / 100));
+      const splitW = CANVAS_WIDTH - splitX;
+      const gradient = ctx.createLinearGradient(Math.max(0, splitX - 50), 0, CANVAS_WIDTH, 0);
+      gradient.addColorStop(0, 'rgba(74, 14, 26, 0.07)');
+      gradient.addColorStop(0.1, 'rgba(255, 102, 0, 0.455)');
+      gradient.addColorStop(1, 'rgba(74, 14, 26, 0.595)');
+
+      ctx.save();
+      ctx.fillStyle = gradient;
+      ctx.fillRect(splitX, 0, splitW, CANVAS_HEIGHT);
+      
+      ctx.strokeStyle = 'rgba(255, 102, 0, 0.35)'; // Naranja sutil
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(splitX, 0);
+      ctx.lineTo(splitX, CANVAS_HEIGHT);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawEyesFilter() {
+      const eyeBoxY = Math.floor(CANVAS_HEIGHT * (eyesPosPercent / 100));
+      const eyeBoxHeight = Math.floor(CANVAS_HEIGHT * (eyesHeightPercent / 100));
+
+      ctx.save();
+      // Solo se aplica gradiente dentro de la franja — NO se oscurece arriba/abajo
+      const grad = ctx.createLinearGradient(0, eyeBoxY, CANVAS_WIDTH, eyeBoxY);
+      grad.addColorStop(0, 'rgba(255, 102, 0, 0.315)');
+      grad.addColorStop(0.5, 'rgba(74, 14, 26, 0.35)');
+      grad.addColorStop(1, 'rgba(255, 138, 101, 0.315)');
+
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, eyeBoxY, CANVAS_WIDTH, eyeBoxHeight);
+
+      ctx.strokeStyle = '#FF6600'; // Naranja Circuito
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(0, eyeBoxY);
+      ctx.lineTo(CANVAS_WIDTH, eyeBoxY);
+      ctx.moveTo(0, eyeBoxY + eyeBoxHeight);
+      ctx.lineTo(CANVAS_WIDTH, eyeBoxY + eyeBoxHeight);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawFullCyberFilter() {
+      const grad = ctx.createRadialGradient(
+        CANVAS_WIDTH * 0.7, CANVAS_HEIGHT * 0.3, 100, 
+        CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.5, CANVAS_WIDTH * 0.8
+      );
+      grad.addColorStop(0, 'rgba(255, 138, 101, 0.28)');
+      grad.addColorStop(0.5, 'rgba(74, 14, 26, 0.385)');
+      grad.addColorStop(1, 'rgba(31, 4, 9, 0.595)');
+
+      ctx.save();
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+      ctx.restore();
+    }
+
+    // clipRegion: { x, y, w, h } o null para todo el canvas
+    function drawGlitchFilter(clipRegion) {
+      const rx = clipRegion ? clipRegion.x : 0;
+      const ry = clipRegion ? clipRegion.y : 0;
+      const rw = clipRegion ? clipRegion.w : CANVAS_WIDTH;
+      const rh = clipRegion ? clipRegion.h : CANVAS_HEIGHT;
+
+      try {
+        // ── PASO 1: Desplazamiento de bandas RGB (-20% intensidad) ────────────
+        let imgData = ctx.getImageData(rx, ry, rw, rh);
+        let data = imgData.data;
+        let tempColor = new Uint8ClampedArray(data.length);
+        tempColor.set(data);
+
+        const numBands = 48;
+        const bandHeight = rh / numBands;
+
+        const offsets = [];
+        for (let b = 0; b < numBands; b++) {
+          const rand = Math.random();
+          if (rand < 0.30) {
+            offsets.push(Math.floor((Math.random() - 0.5) * 130)); // 162 × 0.8
+          } else if (rand < 0.60) {
+            offsets.push(Math.floor((Math.random() - 0.5) * 43));  // 54 × 0.8
+          } else if (rand < 0.80) {
+            offsets.push(Math.floor((Math.random() - 0.5) * 14));  // 18 × 0.8
+          } else {
+            offsets.push(0);
+          }
+        }
+
+        // ── PASO 2: Aberración cromática (-20% intensidad) ────────────────────
+        const chromaShiftR = Math.floor((Math.random() - 0.5) * 29); // 36 × 0.8
+        const chromaShiftB = -chromaShiftR;
+
+        for (let y = 0; y < rh; y++) {
+          const bandIndex = Math.floor(y / bandHeight);
+          const shift = offsets[bandIndex];
+
+          const rowStart = y * rw * 4;
+          let rowBuffer = new Uint8ClampedArray(rw * 4);
+          for (let i = 0; i < rw * 4; i++) rowBuffer[i] = tempColor[rowStart + i];
+
+          for (let x = 0; x < rw; x++) {
+            const dstIdx = (y * rw + x) * 4;
+
+            const srcR = ((x - shift - chromaShiftR) % rw + rw) % rw;
+            const srcB = ((x - shift - chromaShiftB) % rw + rw) % rw;
+
+            data[dstIdx]     = rowBuffer[srcR * 4];
+            data[dstIdx + 1] = rowBuffer[((x - shift + rw) % rw) * 4 + 1];
+            data[dstIdx + 2] = rowBuffer[srcB * 4 + 2];
+            data[dstIdx + 3] = rowBuffer[((x - shift + rw) % rw) * 4 + 3];
+          }
+        }
+        ctx.putImageData(imgData, rx, ry);
+      } catch(e) {
+        console.error("Fallo al aplicar efecto Glitch:", e);
+      }
+
+      // ── PASO 3: Scanlines + flashes + bloques de ruido (-20% intensidad) ──
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(rx, ry, rw, rh);
+      ctx.clip();
+
+      // Scanlines — opacidad reducida 20%: 0.315 → 0.252
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.252)';
+      for (let y = ry; y < ry + rh; y += 2) {
+        ctx.fillRect(rx, y, rw, 1);
+      }
+
+      // Líneas de glitch — cantidad y opacidad reducidas 20%
+      const numGlitchLines = Math.floor(Math.random() * 6) + 2; // Rango 2-7
+      for (let i = 0; i < numGlitchLines; i++) {
+        const lineY = ry + Math.random() * rh;
+        const lineH = Math.random() * 5.6 + 1.6; // 7+2 escalado por 0.8
+        const r = Math.floor(Math.random() * 255);
+        const g = Math.floor(Math.random() * 100);
+        const b = Math.floor(Math.random() * 255);
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${(Math.random() * 0.36 + 0.14).toFixed(2)})`; // 0.45→0.36, 0.18→0.14
+        ctx.fillRect(rx, lineY, rw, lineH);
+      }
+
+      // Bloques de ruido — probabilidad, tamaño y opacidad reducidas 20%
+      const numBlocks = Math.floor(Math.random() * 3) + 2;
+      for (let i = 0; i < numBlocks; i++) {
+        if (Math.random() < 0.50) { // 0.63 × 0.8
+          const bx = rx + Math.random() * rw * 0.8;
+          const by = ry + Math.random() * rh;
+          const bw = Math.random() * 144 + 22;  // 180×0.8, 27×0.8
+          const bh = Math.random() * 14.4 + 3.6; // 18×0.8, 4.5×0.8
+          ctx.fillStyle = `rgba(255, ${Math.floor(Math.random() * 80)}, ${Math.floor(Math.random() * 80)}, ${(Math.random() * 0.43 + 0.07).toFixed(2)})`; // 0.54→0.43, 0.09→0.07
+          ctx.fillRect(bx, by, bw, bh);
+        }
+      }
+
+      // Flash naranja — probabilidad 0.495→0.396, intensidad máx 0.162→0.13
+      if (Math.random() < 0.396) {
+        ctx.fillStyle = `rgba(255, 102, 0, ${(Math.random() * 0.13 + 0.036).toFixed(2)})`;
+        ctx.fillRect(rx, ry, rw, rh);
+      }
+
+      ctx.restore();
+    }
+
+
+    // ================= FILTRO DE TERMINAL & PLACA ELÉCTRICA (ULTRA-TRANSLÚCIDO & ALTO DETALLE) =================
+    function drawTerminalFilter(clipRegion) {
+      const rx = clipRegion ? clipRegion.x : 0;
+      const ry = clipRegion ? clipRegion.y : 0;
+      const rw = clipRegion ? clipRegion.w : CANVAS_WIDTH;
+      const rh = clipRegion ? clipRegion.h : CANVAS_HEIGHT;
+
+      // 1. Tinte de fósforo casi invisible (92% de imagen original intacta, 8% calidez sutil)
+      try {
+        let imgData = ctx.getImageData(rx, ry, rw, rh);
+        let data = imgData.data;
+        let orig = new Uint8ClampedArray(data.length);
+        orig.set(data);
+
+        for (let i = 0; i < data.length; i += 4) {
+          let bright = 0.299 * orig[i] + 0.587 * orig[i+1] + 0.114 * orig[i+2];
+          let factor = Math.pow(bright / 255, 1.1);
+
+          let amberR = Math.min(255, factor * 255 + 20);
+          let amberG = Math.min(180, factor * 160 + 10);
+          let amberB = factor * 30;
+
+          // Blend ultra suave (8% fósforo, 92% original) para máxima transparencia
+          let blend = 0.08;
+          data[i]   = Math.round(orig[i]   * (1 - blend) + amberR * blend);
+          data[i+1] = Math.round(orig[i+1] * (1 - blend) + amberG * blend);
+          data[i+2] = Math.round(orig[i+2] * (1 - blend) + amberB * blend);
+        }
+        ctx.putImageData(imgData, rx, ry);
+      } catch(e) {
+        console.error("Fallo al aplicar efecto Terminal Ámbar:", e);
+      }
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(rx, ry, rw, rh);
+      ctx.clip();
+
+      // 2. Scanlines CRT ultra discretas (casi imperceptibles)
+      ctx.fillStyle = 'rgba(255, 102, 0, 0.025)';
+      for (let y = ry; y < ry + rh; y += 4) {
+        ctx.fillRect(rx, y, rw, 1.2);
+      }
+
+      // 3. PISTAS DE COBRE Y BUSES DE LA PLACA ELÉCTRICA (Muy notorios y brillantes)
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      // --- PISTAS DE CIRCUITO PRINCIPALES (Naranja Circuito brillante con nodos de soldadura) ---
+      ctx.strokeStyle = 'rgba(255, 102, 0, 0.85)';
+      ctx.lineWidth = 2.4;
+
+      const pcbTraces = [
+        // Bus perimetral superior con quiebres a 45°
+        { pts: [[rx + 30, ry + 40], [rx + 160, ry + 40], [rx + 210, ry + 90], [rx + 360, ry + 90]], node: [rx + 360, ry + 90] },
+        { pts: [[rx + 30, ry + 60], [rx + 140, ry + 60], [rx + 185, ry + 105], [rx + 320, ry + 105]], node: [rx + 320, ry + 105] },
+        { pts: [[rx + 30, ry + 80], [rx + 120, ry + 80], [rx + 160, ry + 120], [rx + 280, ry + 120]], node: [rx + 280, ry + 120] },
+
+        // Bus de datos lateral derecho
+        { pts: [[rx + rw - 30, ry + 140], [rx + rw - 130, ry + 140], [rx + rw - 180, ry + 190], [rx + rw - 180, ry + 320], [rx + rw - 240, ry + 380]], node: [rx + rw - 240, ry + 380] },
+        { pts: [[rx + rw - 30, ry + 165], [rx + rw - 110, ry + 165], [rx + rw - 155, ry + 210], [rx + rw - 155, ry + 340]], node: [rx + rw - 155, ry + 340] },
+        { pts: [[rx + rw - 30, ry + 190], [rx + rw - 90, ry + 190], [rx + rw - 130, ry + 230], [rx + rw - 130, ry + 360]], node: [rx + rw - 130, ry + 360] },
+
+        // Pistas centrales y de potencia
+        { pts: [[rx + rw * 0.35, ry + rh * 0.65], [rx + rw * 0.48, ry + rh * 0.65], [rx + rw * 0.55, ry + rh * 0.72], [rx + rw * 0.75, ry + rh * 0.72]], node: [rx + rw * 0.75, ry + rh * 0.72] },
+        { pts: [[rx + rw * 0.38, ry + rh * 0.68], [rx + rw * 0.46, ry + rh * 0.68], [rx + rw * 0.52, ry + rh * 0.74], [rx + rw * 0.68, ry + rh * 0.74]], node: [rx + rw * 0.68, ry + rh * 0.74] },
+
+        // Pistas inferiores hacia la izquierda
+        { pts: [[rx + rw * 0.65, ry + rh - 50], [rx + rw * 0.48, ry + rh - 50], [rx + rw * 0.40, ry + rh - 130], [rx + rw * 0.22, ry + rh - 130]], node: [rx + rw * 0.22, ry + rh - 130] },
+        { pts: [[rx + rw * 0.62, ry + rh - 75], [rx + rw * 0.50, ry + rh - 75], [rx + rw * 0.44, ry + rh - 135], [rx + rw * 0.30, ry + rh - 135]], node: [rx + rw * 0.30, ry + rh - 135] }
+      ];
+
+      pcbTraces.forEach(t => {
+        ctx.beginPath();
+        ctx.moveTo(t.pts[0][0], t.pts[0][1]);
+        for (let i = 1; i < t.pts.length; i++) ctx.lineTo(t.pts[i][0], t.pts[i][1]);
+        ctx.stroke();
+
+        // Nodos circulares de vía (vias) con centro perforado
+        if (t.node) {
+          ctx.beginPath();
+          ctx.arc(t.node[0], t.node[1], 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = '#FF6600';
+          ctx.fill();
+          ctx.strokeStyle = '#FDF3C7';
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+          ctx.strokeStyle = 'rgba(255, 102, 0, 0.85)';
+          ctx.lineWidth = 2.4;
+        }
+      });
+
+      // 4. MICROCONTROLADOR / CHIP INTEGRADO (IC-1 con serigrafía y pines)
+      const chipX = rx + rw - 180;
+      const chipY = ry + 60;
+      const chipW = 120;
+      const chipH = 75;
+
+      // Cuerpo del chip oscuro translúcido con borde dorado
+      ctx.fillStyle = 'rgba(15, 5, 8, 0.75)';
+      ctx.fillRect(chipX, chipY, chipW, chipH);
+      ctx.strokeStyle = '#FF6600';
+      ctx.lineWidth = 1.8;
+      ctx.strokeRect(chipX, chipY, chipW, chipH);
+
+      // Muesca de orientación del chip (notch)
+      ctx.beginPath();
+      ctx.arc(chipX + 12, chipY + chipH / 2, 4.5, -Math.PI / 2, Math.PI / 2);
+      ctx.strokeStyle = 'rgba(253, 243, 199, 0.7)';
+      ctx.stroke();
+
+      // Pines de soldadura (superior e inferior)
+      ctx.fillStyle = '#FF8A65';
+      for (let px = chipX + 18; px < chipX + chipW - 12; px += 13) {
+        ctx.fillRect(px, chipY - 7, 5, 7);  // Pines superiores
+        ctx.fillRect(px, chipY + chipH, 5, 7); // Pines inferiores
+      }
+
+      // Serigrafía técnica sobre el chip
+      ctx.fillStyle = 'rgba(253, 243, 199, 0.9)';
+      ctx.font = 'bold 9px "Montserrat", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText("ELAD-MCU-26", chipX + chipW / 2, chipY + 28);
+      ctx.font = '500 7.5px "Roboto", monospace';
+      ctx.fillStyle = 'rgba(255, 138, 101, 0.85)';
+      ctx.fillText("LAT_BUS_8BIT", chipX + chipW / 2, chipY + 42);
+      ctx.fillText("REV_3.2 // 64MHz", chipX + chipW / 2, chipY + 55);
+
+      // 5. BANCO DE COMPONENTES SMD (Resistencias y condensadores en placa)
+      const smdX = rx + 40;
+      const smdY = ry + rh * 0.45;
+      for (let k = 0; k < 5; k++) {
+        const sy = smdY + k * 18;
+        // Pista de conexión
+        ctx.strokeStyle = 'rgba(255, 102, 0, 0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(smdX - 15, sy + 4);
+        ctx.lineTo(smdX + 45, sy + 4);
+        ctx.stroke();
+
+        // Componente SMD bicolor
+        ctx.fillStyle = 'rgba(31, 4, 9, 0.85)';
+        ctx.fillRect(smdX, sy, 18, 8);
+        ctx.fillStyle = '#FDF3C7'; // Terminales metálicas
+        ctx.fillRect(smdX, sy, 3.5, 8);
+        ctx.fillRect(smdX + 14.5, sy, 3.5, 8);
+
+        // Etiqueta serigrafiada
+        ctx.fillStyle = 'rgba(253, 243, 199, 0.6)';
+        ctx.font = '7px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`R${k + 1}_10K`, smdX + 24, sy + 7);
+      }
+
+      // 6. PUNTOS DE PRUEBA CIRCULARES (Test Points)
+      const testPoints = [
+        { x: rx + 140, y: ry + rh * 0.35, label: "TP1 [3.3V]" },
+        { x: rx + 220, y: ry + rh * 0.35, label: "TP2 [GND]" },
+        { x: rx + rw * 0.65, y: ry + rh * 0.85, label: "CLK_SYNC" },
+        { x: rx + rw * 0.82, y: ry + rh * 0.85, label: "+5V_IN" }
+      ];
+
+      testPoints.forEach(tp => {
+        // Anillo exterior
+        ctx.beginPath();
+        ctx.arc(tp.x, tp.y, 6.5, 0, Math.PI * 2);
+        ctx.strokeStyle = '#FF6600';
+        ctx.lineWidth = 1.4;
+        ctx.stroke();
+        // Punto central de cobre
+        ctx.beginPath();
+        ctx.arc(tp.x, tp.y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#FDF3C7';
+        ctx.fill();
+        // Etiqueta
+        ctx.fillStyle = 'rgba(253, 243, 199, 0.7)';
+        ctx.font = '8px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(tp.label, tp.x, tp.y - 10);
+      });
+
+      // 7. CONSOLA DE TERMINAL CYBERPUNK / LOGS DE SISTEMA (Muy notorio)
+      const termBoxX = rx + 25;
+      const termBoxY = ry + 20;
+      const termLines = [
+        "> ELAD_OS v26.4 [BOOT_OK]",
+        "> PORT_0x3F8 // 115200 BAUD [ONLINE]",
+        "> BUS: LAT_ANTROPOLOGIA_DIGITAL",
+        "> IO_ADDR: 0x7FFA4 -- SYNCED",
+        "> SYSTEM_STATE: ACTIVE █"
+      ];
+
+      ctx.fillStyle = 'rgba(10, 4, 6, 0.7)';
+      ctx.fillRect(termBoxX, termBoxY, 240, 78);
+      ctx.strokeStyle = 'rgba(255, 102, 0, 0.5)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(termBoxX, termBoxY, 240, 78);
+
+      ctx.textAlign = 'left';
+      ctx.font = 'bold 9px "Roboto", monospace';
+      termLines.forEach((line, idx) => {
+        if (idx === termLines.length - 1) {
+          ctx.fillStyle = '#FF6600'; // Última línea con cursor naranja brillante
+        } else {
+          ctx.fillStyle = 'rgba(253, 243, 199, 0.85)'; // Texto crema
+        }
+        ctx.fillText(line, termBoxX + 10, termBoxY + 16 + idx * 13);
+      });
+
+      ctx.restore();
+    }
+
+
+    function drawEventGridAndFrame() {
+      ctx.save();
+      
+      const margin = 35;
+      const length = 25;
+      ctx.strokeStyle = 'rgba(255, 102, 0, 0.25)'; // Naranja Circuito sutil
+      ctx.lineWidth = 2;
+
+      // Esquinas de calibración de cámara
+      ctx.beginPath();
+      ctx.moveTo(margin + length, margin); ctx.lineTo(margin, margin); ctx.lineTo(margin, margin + length);
+      ctx.moveTo(CANVAS_WIDTH - margin - length, margin); ctx.lineTo(CANVAS_WIDTH - margin, margin); ctx.lineTo(CANVAS_WIDTH - margin, margin + length);
+      ctx.moveTo(margin + length, CANVAS_HEIGHT - margin); ctx.lineTo(margin, CANVAS_HEIGHT - margin); ctx.lineTo(margin, CANVAS_HEIGHT - margin + length);
+      ctx.moveTo(CANVAS_WIDTH - margin - length, CANVAS_HEIGHT - margin); ctx.lineTo(margin, CANVAS_HEIGHT - margin); ctx.lineTo(margin, CANVAS_HEIGHT - margin + length);
+      ctx.stroke();
+
+      // Trama técnica de puntos (Naranja Suave)
+      ctx.fillStyle = 'rgba(255, 138, 101, 0.04)';
+      for (let i = margin * 2; i < CANVAS_WIDTH - margin * 2; i += 80) {
+        for (let j = margin * 2; j < CANVAS_HEIGHT - margin * 2; j += 80) {
+          ctx.fillRect(i, j, 2, 2);
+        }
+      }
+
+      ctx.restore();
+    }
+
+    function drawTypographyAndBadges() {
+      ctx.save();
+
+      const nameText = (nameInput.value || currentSession.name || defaultData.name).toUpperCase();
+      const handleText = (handleInput.value || currentSession.handle || defaultData.handle).toLowerCase();
+      const roleText = (roleInput.value || currentSession.role || defaultData.role).toUpperCase();
+
+      // Protección activa de renderizado contra bypass en DevTools
+      if ((roleText === "ORGANIZADOR" || roleText === "STAFF") && !currentSession.isAdminVerified) {
+        ctx.restore();
+        setTimeout(lockAdminRoles, 0); // Ejecución diferida para evitar bucles recurrentes de render
+        return;
+      }
+
+      // ================= CAPA DE PROTECCIÓN DE TEXTO (Siempre Borgoña) =================
+      const textProtectGrad = ctx.createLinearGradient(0, 0, CANVAS_WIDTH * 0.65, 0);
+      textProtectGrad.addColorStop(0, 'rgba(31, 4, 9, 0.88)');  
+      textProtectGrad.addColorStop(0.5, 'rgba(74, 14, 26, 0.45)');  
+      textProtectGrad.addColorStop(1, 'rgba(74, 14, 26, 0)');      
+      
+      ctx.fillStyle = textProtectGrad;
+      ctx.fillRect(0, 0, CANVAS_WIDTH * 0.7, CANVAS_HEIGHT);
+
+      const bottomProtectGrad = ctx.createLinearGradient(0, CANVAS_HEIGHT, 0, CANVAS_HEIGHT * 0.65);
+      bottomProtectGrad.addColorStop(0, 'rgba(31, 4, 9, 0.9)');
+      bottomProtectGrad.addColorStop(1, 'rgba(74, 14, 26, 0)');
+      ctx.fillStyle = bottomProtectGrad;
+      ctx.fillRect(0, CANVAS_HEIGHT * 0.6, CANVAS_WIDTH * 0.7, CANVAS_HEIGHT * 0.4);
+
+
+      // 1. TÍTULO DE CAMPAÑA: #ELAD26 e Identidad
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 44px "Montserrat", sans-serif';
+      ctx.fillText("#ELAD26", 100, 345);
+      
+      ctx.fillStyle = '#FFFFFF'; // Blanco como #ELAD26
+      ctx.font = 'bold 20px "Montserrat", sans-serif';
+      ctx.fillText("VI ENCUENTRO LATINOAMERICANO", 100, 395);
+      ctx.fillText("DE ANTROPOLOGÍA DIGITAL", 100, 425);
+
+      // Subtextos estéticos del evento
+      ctx.fillStyle = '#FDF3C7'; // Crema — texto temático
+      ctx.font = '500 28px "Roboto", sans-serif';
+      ctx.fillText("¿Habitar lo híbrido?", 100, 468);
+
+      ctx.fillStyle = '#FF8A65'; // Naranja Suave — fecha
+      ctx.font = '500 28px "Roboto", sans-serif';
+      ctx.fillText("Diciembre 2, 3 y 4, 2026", 100, 508);
+      ctx.font = '500 19px "Roboto", sans-serif';
+      ctx.fillText("Miembro Oficial", 100, 540);
+
+      // Línea vertical izquierda de acento de #ELAD26
+      ctx.strokeStyle = '#FF6600'; // Naranja Circuito
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(75, 310);
+      ctx.lineTo(75, 550);
+      ctx.stroke();
+
+
+
+      // Badge de Rol en la esquina derecha superior (Fondo Naranja Circuito, 40% más grande)
+      ctx.fillStyle = '#FF6600';
+      ctx.fillRect(728, 112, 252, 56);
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 21px "Montserrat", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(roleText, 854, 140);
+
+      // 3. Mini Recuadro Thumbnail en la parte inferior izquierda (Con borde Naranja)
+      const thumbX = 100;
+      const thumbY = 670;
+      const thumbSize = 100;
+
+      ctx.fillStyle = 'rgba(255, 102, 0, 0.2)';
+      ctx.fillRect(thumbX - 6, thumbY - 6, thumbSize + 12, thumbSize + 12);
+      ctx.strokeStyle = '#FF6600';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(thumbX - 6, thumbY - 6, thumbSize + 12, thumbSize + 12);
+
+      if (userImage) {
+        ctx.drawImage(userImage, thumbX, thumbY, thumbSize, thumbSize);
+      } else {
+        ctx.fillStyle = '#2B070D'; // Borgoña oscuro
+        ctx.fillRect(thumbX, thumbY, thumbSize, thumbSize);
+        ctx.fillStyle = '#FF6600';
+        ctx.font = 'bold 36px "Montserrat", sans-serif';
+        ctx.fillText("RE", thumbX + 50, thumbY + 55);
+      }
+
+      // 4. Nombre del participante
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 54px "Montserrat", sans-serif';
+      
+      const words = nameText.split(' ');
+      if (words.length > 2) {
+        const firstLine = words.slice(0, 2).join(' ');
+        const secondLine = words.slice(2).join(' ');
+        ctx.fillText(firstLine, 100, 840);
+        ctx.fillText(secondLine, 100, 905);
+      } else {
+        ctx.fillText(nameText, 100, 840);
+      }
+
+      // Handle de Redes (Estilo naranja suave)
+      ctx.fillStyle = '#FF8A65';
+      ctx.font = '600 24px "Roboto", sans-serif';
+      const handleWithAt = handleText.startsWith('@') ? handleText : '@' + handleText;
+      ctx.fillText(handleWithAt, 100, 955);
+
+      ctx.restore();
+    }
+
+
+    // --- SELECCIÓN DE FORMATO Y DESCARGA DEL POSTER ---
+    let selectedExportFormat = 'png';
+    const btnFormatPng = document.getElementById('btnFormatPng');
+    const btnFormatJpg = document.getElementById('btnFormatJpg');
+    const downloadBtnText = document.getElementById('downloadBtnText');
+
+    function setExportFormat(format) {
+      selectedExportFormat = format;
+      if (format === 'png') {
+        btnFormatPng.classList.add('bg-orangeCircuit', 'text-white', 'shadow-sm');
+        btnFormatPng.classList.remove('text-gray-400');
+        btnFormatJpg.classList.remove('bg-orangeCircuit', 'text-white', 'shadow-sm');
+        btnFormatJpg.classList.add('text-gray-400');
+        if (downloadBtnText) downloadBtnText.textContent = 'Descargar en PNG (Alta Definición)';
+      } else {
+        btnFormatJpg.classList.add('bg-orangeCircuit', 'text-white', 'shadow-sm');
+        btnFormatJpg.classList.remove('text-gray-400');
+        btnFormatPng.classList.remove('bg-orangeCircuit', 'text-white', 'shadow-sm');
+        btnFormatPng.classList.add('text-gray-400');
+        if (downloadBtnText) downloadBtnText.textContent = 'Descargar en JPG (Calidad 95%)';
+      }
+    }
+
+    if (btnFormatPng && btnFormatJpg) {
+      btnFormatPng.addEventListener('click', () => setExportFormat('png'));
+      btnFormatJpg.addEventListener('click', () => setExportFormat('jpg'));
+    }
+
+    btnDownload.addEventListener('click', () => {
+      if (!userImage) {
+        if (canvasWrapper) {
+          canvasWrapper.classList.add('border-red-500', 'ring-2', 'ring-red-500/60', 'animate-shake');
+          setTimeout(() => {
+            canvasWrapper.classList.remove('border-red-500', 'ring-2', 'ring-red-500/60', 'animate-shake');
+          }, 1200);
+          canvasWrapper.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      const mimeType = selectedExportFormat === 'jpg' ? 'image/jpeg' : 'image/png';
+      const extension = selectedExportFormat === 'jpg' ? 'jpg' : 'png';
+      const quality = selectedExportFormat === 'jpg' ? 0.95 : undefined;
+
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          console.error("Error al generar el archivo de descarga");
+          return;
+        }
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        
+        const filenameSafe = (nameInput.value || "participante").trim().toLowerCase().replace(/[^a-z0-9]/g, "_");
+        a.download = `elad26_${filenameSafe}.${extension}`;
+        
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        successModal.classList.remove('hidden');
+      }, mimeType, quality);
+    });
+
+    btnCloseModal.addEventListener('click', () => {
+      successModal.classList.add('hidden');
+    });
+  </script>
+</body>
+</html>

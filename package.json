@@ -1,0 +1,12 @@
+{
+  "name": "reload-poster-generator",
+  "version": "1.0.0",
+  "description": "Creador de Posters de Eventos RELOAD",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "vite": "^8.2.1"
+  }
+}
