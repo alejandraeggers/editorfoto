@@ -27,28 +27,6 @@ Generador interactivo de posters oficiales para el evento **RELOAD / ELAD 2026**
 
 ---
 
-## 🚀 Instalación y Uso Local
-
-1. **Clonar el repositorio**:
-   ```bash
-   git clone https://github.com/alejandraeggers/editorfoto.git
-   cd editorfoto
-   ```
-
-2. **Instalar dependencias**:
-   ```bash
-   npm install
-   ```
-
-3. **Iniciar el servidor de desarrollo**:
-   ```bash
-   npm run dev
-   ```
-
-4. **Abrir en el navegador**:
-   Visita `http://localhost:5173/` en tu navegador.
-
----
 
 ## 📸 Hashtags Oficiales
 
