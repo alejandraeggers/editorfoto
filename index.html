@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob:; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' ws: http: https:;">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self' 'unsafe-inline' data: blob:; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' ws: http: https:;">
   <title>RELoAD - Tu foto ELAD26</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="favicon.png">
@@ -12,7 +14,9 @@
   <!-- Google Fonts para tipografía #ELAD26 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap"
+    rel="stylesheet">
   <script>
     tailwind.config = {
       theme: {
@@ -45,22 +49,37 @@
       font-family: 'Roboto', sans-serif;
       background-color: #1F0409;
     }
+
     .font-tech {
       font-family: 'Montserrat', sans-serif;
     }
+
     /* Estilo para simular el grano de película en la interfaz */
     .noise-bg {
       background-image: radial-gradient(rgba(255, 102, 0, 0.08) 1px, transparent 0);
       background-size: 24px 24px;
     }
+
     .animate-shake {
       animation: shake 0.5s ease-in-out;
     }
+
     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-6px); }
-      75% { transform: translateX(6px); }
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-6px);
+      }
+
+      75% {
+        transform: translateX(6px);
+      }
     }
+
     /* Optimización táctil y controles para móviles */
     input[type="range"] {
       -webkit-appearance: none;
@@ -68,6 +87,7 @@
       height: 8px;
       border-radius: 6px;
     }
+
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
@@ -79,6 +99,7 @@
       box-shadow: 0 0 10px rgba(255, 102, 0, 0.7);
       border: 2px solid #FFFFFF;
     }
+
     input[type="range"]::-moz-range-thumb {
       width: 24px;
       height: 24px;
@@ -88,12 +109,17 @@
       box-shadow: 0 0 10px rgba(255, 102, 0, 0.7);
       border: 2px solid #FFFFFF;
     }
+
     /* Prevenir zoom involuntario en iOS Safari al enfocar inputs */
     @media (max-width: 768px) {
-      input[type="text"], input[type="email"], select {
+
+      input[type="text"],
+      input[type="email"],
+      select {
         font-size: 16px !important;
       }
     }
+
     /* Desactivar scroll nativo al manipular el canvas */
     canvas {
       touch-action: none;
@@ -102,14 +128,17 @@
     }
   </style>
 </head>
+
 <body class="text-gray-100 min-h-screen flex flex-col noise-bg">
 
   <!-- ================= MODAL DE VERIFICACIÓN DE STAFF ================= -->
-  <div id="accessGate" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[200] flex items-center justify-center p-4 transition-all duration-500 hidden">
-    <div class="max-w-md w-full bg-burgundy-dark border border-burgundy-light rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+  <div id="accessGate"
+    class="fixed inset-0 bg-black/85 backdrop-blur-md z-[200] flex items-center justify-center p-4 transition-all duration-500 hidden">
+    <div
+      class="max-w-md w-full bg-burgundy-dark border border-burgundy-light rounded-3xl p-8 shadow-2xl relative overflow-hidden">
       <!-- Decoración de fondo de consola cyber -->
       <div class="absolute -right-16 -top-16 w-36 h-36 bg-orangeCircuit/10 rounded-full blur-2xl"></div>
-      
+
       <!-- Botón para cerrar modal -->
       <button id="btnCloseAccessGate" class="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -118,23 +147,29 @@
       </button>
 
       <div class="text-center mb-8">
-        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orangeCircuit via-burgundy to-orangeCircuit-soft flex items-center justify-center shadow-lg shadow-orangeCircuit/20 mx-auto mb-4">
+        <div
+          class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orangeCircuit via-burgundy to-orangeCircuit-soft flex items-center justify-center shadow-lg shadow-orangeCircuit/20 mx-auto mb-4">
           <span class="text-white font-extrabold font-tech text-2xl">RE</span>
         </div>
         <h2 class="text-2xl font-bold font-tech text-cream tracking-tight">VERIFICAR STAFF</h2>
-        <p class="text-xs text-gray-400 mt-2">Ingresa tu correo electrónico registrado para verificar tu identidad y desbloquear los roles de Organizador o Staff.</p>
+        <p class="text-xs text-gray-400 mt-2">Ingresa tu correo electrónico registrado para verificar tu identidad y
+          desbloquear los roles de Organizador o Staff.</p>
       </div>
 
       <!-- Formulario de Check-In -->
       <div class="space-y-4" id="loginForm">
         <div>
-          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Correo Electrónico</label>
-          <input type="email" id="gateEmail" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+          <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Correo
+            Electrónico</label>
+          <input type="email" id="gateEmail"
+            class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
           <p class="text-[11px] text-gray-400 mt-1.5 font-normal">Ejemplo: nombre@mail.com</p>
-          <p id="gateErrorMessage" class="text-xs text-red-400 mt-2 hidden">Introduce un formato de correo electrónico válido.</p>
+          <p id="gateErrorMessage" class="text-xs text-red-400 mt-2 hidden">Introduce un formato de correo electrónico
+            válido.</p>
         </div>
 
-        <button id="btnVerifyEmail" class="w-full bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft hover:from-orangeCircuit/90 hover:to-orangeCircuit-soft/90 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg shadow-orangeCircuit/20 flex items-center justify-center gap-2 text-sm">
+        <button id="btnVerifyEmail"
+          class="w-full bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft hover:from-orangeCircuit/90 hover:to-orangeCircuit-soft/90 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg shadow-orangeCircuit/20 flex items-center justify-center gap-2 text-sm">
           <span>Verificar Correo</span>
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
@@ -147,32 +182,41 @@
 
   <!-- ================= APLICACIÓN PRINCIPAL ================= -->
   <div id="mainApp" class="transition-all duration-700 flex flex-col min-h-screen">
-    
+
     <!-- Encabezado / Navbar -->
-    <header class="border-b border-burgundy-light/40 bg-burgundy-deep/90 backdrop-blur-md sticky top-0 z-50 px-3 sm:px-4 py-3">
+    <header
+      class="border-b border-burgundy-light/40 bg-burgundy-deep/90 backdrop-blur-md sticky top-0 z-50 px-3 sm:px-4 py-3">
       <div class="max-w-7xl mx-auto flex justify-between items-center gap-2">
         <div class="flex items-center space-x-2.5 sm:space-x-3">
-          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-tr from-orangeCircuit via-burgundy to-orangeCircuit-soft flex items-center justify-center shadow-lg shadow-orangeCircuit/20 shrink-0">
+          <div
+            class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-tr from-orangeCircuit via-burgundy to-orangeCircuit-soft flex items-center justify-center shadow-lg shadow-orangeCircuit/20 shrink-0">
             <span class="text-white font-extrabold font-tech text-base sm:text-lg">RE</span>
           </div>
           <div>
-            <h1 class="text-sm sm:text-lg font-bold tracking-tight font-tech text-transparent bg-clip-text bg-gradient-to-r from-white via-cream to-orangeCircuit-soft leading-tight">
-              RELOAD <span class="text-[10px] sm:text-xs font-semibold text-orangeCircuit ml-0.5 sm:ml-1 block sm:inline">POSTER GENERATOR</span>
+            <h1
+              class="text-sm sm:text-lg font-bold tracking-tight font-tech text-transparent bg-clip-text bg-gradient-to-r from-white via-cream to-orangeCircuit-soft leading-tight">
+              RELOAD <span
+                class="text-[10px] sm:text-xs font-semibold text-orangeCircuit ml-0.5 sm:ml-1 block sm:inline">POSTER
+                GENERATOR</span>
             </h1>
-            <p class="text-[9px] sm:text-[10px] text-gray-400 hidden xs:block">Crea, personaliza y comparte tu participación</p>
+            <p class="text-[9px] sm:text-[10px] text-gray-400 hidden xs:block">Crea, personaliza y comparte tu
+              participación</p>
           </div>
         </div>
-        
+
         <!-- Estado de Credencial & Control Interno -->
         <div class="flex items-center space-x-2 sm:space-x-3 text-xs shrink-0">
           <div class="hidden sm:flex flex-col items-end">
             <span id="userBadgeEmail" class="text-gray-400 font-mono text-[11px]">acceso-publico@reload.com</span>
-            <span id="userBadgeTier" class="text-[9px] text-orangeCircuit font-bold uppercase tracking-wider">Credencial Pública</span>
+            <span id="userBadgeTier" class="text-[9px] text-orangeCircuit font-bold uppercase tracking-wider">Credencial
+              Pública</span>
           </div>
-          <button id="btnChangeAccount" class="text-orangeCircuit hover:text-orangeCircuit-soft text-[10px] sm:text-[11px] font-semibold border border-orangeCircuit/20 bg-orangeCircuit/5 px-2 sm:px-2.5 py-1.5 rounded-lg transition-colors whitespace-nowrap">
+          <button id="btnChangeAccount"
+            class="text-orangeCircuit hover:text-orangeCircuit-soft text-[10px] sm:text-[11px] font-semibold border border-orangeCircuit/20 bg-orangeCircuit/5 px-2 sm:px-2.5 py-1.5 rounded-lg transition-colors whitespace-nowrap">
             Verificar Staff 🔒
           </button>
-          <button id="btnOpenInternalControl" title="Acceso a Control Interno y Estadísticas" class="text-gray-300 hover:text-white text-[10px] sm:text-[11px] font-semibold border border-orangeCircuit/30 hover:border-orangeCircuit bg-burgundy-dark/90 hover:bg-orangeCircuit/10 px-2 sm:px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap shadow-sm">
+          <button id="btnOpenInternalControl" title="Acceso a Control Interno y Estadísticas"
+            class="text-gray-300 hover:text-white text-[10px] sm:text-[11px] font-semibold border border-orangeCircuit/30 hover:border-orangeCircuit bg-burgundy-dark/90 hover:bg-orangeCircuit/10 px-2 sm:px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap shadow-sm">
             <span class="text-xs">📊</span>
             <span class="hidden xs:inline">Control Interno</span>
           </button>
@@ -182,33 +226,40 @@
 
     <!-- Contenedor Principal -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-3 sm:p-6 lg:p-8 grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8">
-      
+
       <!-- Columna Izquierda: Panel de Control (5 columnas en desktop, debajo del preview en móvil) -->
       <section class="order-2 lg:order-1 lg:col-span-5 flex flex-col space-y-4 sm:space-y-6">
 
         <!-- Paso 1: Personalizar Textos -->
         <div class="bg-burgundy-dark border border-burgundy-light/50 rounded-2xl p-4 sm:p-6 shadow-xl">
           <h2 class="text-sm font-semibold text-cream font-tech uppercase tracking-wider mb-4 flex items-center gap-2">
-            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-orangeCircuit/10 text-orangeCircuit-soft text-xs font-bold">1</span>
+            <span
+              class="flex items-center justify-center w-6 h-6 rounded-full bg-orangeCircuit/10 text-orangeCircuit-soft text-xs font-bold">1</span>
             Información de Participante
           </h2>
-          
+
           <div class="space-y-4">
             <div>
-              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Nombre Completo</label>
-              <input type="text" id="nameInput" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+              <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Nombre
+                Completo</label>
+              <input type="text" id="nameInput"
+                class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
               <p class="text-[11px] text-gray-400 mt-1 font-normal">Ejemplo: Red de Antropología Digital</p>
             </div>
-            
+
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Usuario / Red Social</label>
-                <input type="text" id="handleInput" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Usuario / Red
+                  Social</label>
+                <input type="text" id="handleInput"
+                  class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
                 <p class="text-[11px] text-gray-400 mt-1 font-normal">Ejemplo: @redlatdigital</p>
               </div>
               <div>
-                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Rol en Evento</label>
-                <select id="roleInput" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-3 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+                <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Rol en
+                  Evento</label>
+                <select id="roleInput"
+                  class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-3 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
                   <option value="PARTICIPANTE">PARTICIPANTE</option>
                   <option value="PONENTE">PONENTE</option>
                   <option value="LOCKED">🔒 ORGANIZADOR / STAFF</option>
@@ -221,23 +272,27 @@
         <!-- Paso 2: Estilos y Filtros -->
         <div class="bg-burgundy-dark border border-burgundy-light/50 rounded-2xl p-4 sm:p-6 shadow-xl">
           <h2 class="text-sm font-semibold text-cream font-tech uppercase tracking-wider mb-4 flex items-center gap-2">
-            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-orangeCircuit/10 text-orangeCircuit-soft text-xs font-bold">2</span>
+            <span
+              class="flex items-center justify-center w-6 h-6 rounded-full bg-orangeCircuit/10 text-orangeCircuit-soft text-xs font-bold">2</span>
             Estilo del Filtro
           </h2>
-          
+
           <div class="space-y-2">
             <!-- Fila 1: Composición de imagen (cómo se recorta/muestra) -->
             <p class="text-[10px] text-gray-500 uppercase tracking-wider mb-1">Composición</p>
             <div class="grid grid-cols-3 gap-2">
-              <button id="btnLayoutHalf" class="layout-btn active bg-orangeCircuit/10 border-2 border-orangeCircuit text-cream font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
+              <button id="btnLayoutHalf"
+                class="layout-btn active bg-orangeCircuit/10 border-2 border-orangeCircuit text-cream font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
                 <span class="w-4 h-4 rounded-full bg-gradient-to-r from-burgundy to-orangeCircuit"></span>
                 Media Imagen
               </button>
-              <button id="btnLayoutEyes" class="layout-btn border-2 border-burgundy-light/60 text-gray-400 hover:text-white hover:border-orangeCircuit/50 font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
+              <button id="btnLayoutEyes"
+                class="layout-btn border-2 border-burgundy-light/60 text-gray-400 hover:text-white hover:border-orangeCircuit/50 font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
                 <span class="w-4 h-1.5 rounded-sm bg-orangeCircuit"></span>
                 Línea Horizontal
               </button>
-              <button id="btnLayoutFull" class="layout-btn border-2 border-burgundy-light/60 text-gray-400 hover:text-white hover:border-orangeCircuit/50 font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
+              <button id="btnLayoutFull"
+                class="layout-btn border-2 border-burgundy-light/60 text-gray-400 hover:text-white hover:border-orangeCircuit/50 font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
                 <span class="w-4 h-4 rounded-full bg-orangeCircuit"></span>
                 Filtro Global
               </button>
@@ -246,16 +301,20 @@
             <!-- Fila 2: Efecto de color (se combina con la composición) -->
             <p class="text-[10px] text-gray-500 uppercase tracking-wider mt-3 mb-1">Efecto de color</p>
             <div class="grid grid-cols-2 gap-2">
-              <button id="btnEffectGlitch" class="effect-btn border-2 border-burgundy-light/60 text-gray-400 hover:text-white hover:border-orangeCircuit/50 font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
-                <span class="w-4 h-4 rounded-full bg-gradient-to-tr from-orangeCircuit-soft via-burgundy to-cream"></span>
+              <button id="btnEffectGlitch"
+                class="effect-btn border-2 border-burgundy-light/60 text-gray-400 hover:text-white hover:border-orangeCircuit/50 font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
+                <span
+                  class="w-4 h-4 rounded-full bg-gradient-to-tr from-orangeCircuit-soft via-burgundy to-cream"></span>
                 RGB Glitch
               </button>
-              <button id="btnEffectTerminal" class="effect-btn border-2 border-burgundy-light/60 text-gray-400 hover:text-white hover:border-orangeCircuit/50 font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
+              <button id="btnEffectTerminal"
+                class="effect-btn border-2 border-burgundy-light/60 text-gray-400 hover:text-white hover:border-orangeCircuit/50 font-semibold py-2.5 px-2 rounded-xl text-[11px] transition-all flex flex-col items-center justify-center gap-1.5">
                 <span class="w-4 h-4 rounded-full bg-orangeCircuit border border-burgundy-light"></span>
                 Terminal Ámbar
               </button>
             </div>
-            <p class="text-[10px] text-gray-500 text-center mt-1">El efecto de color se aplica sobre la composición elegida</p>
+            <p class="text-[10px] text-gray-500 text-center mt-1">El efecto de color se aplica sobre la composición
+              elegida</p>
           </div>
 
           <!-- Ajustes Dinámicos de la Composición (Mover Media Imagen o Línea Horizontal) -->
@@ -264,12 +323,16 @@
             <div id="controlHalfSection" class="space-y-1.5">
               <div class="flex justify-between text-xs text-gray-400">
                 <span class="flex items-center gap-1.5">
-                  <svg class="w-3.5 h-3.5 text-orangeCircuit" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                  <svg class="w-3.5 h-3.5 text-orangeCircuit" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                  </svg>
                   Mover corte de Media Imagen
                 </span>
                 <span id="halfSplitVal" class="text-orangeCircuit-soft font-mono font-bold">54%</span>
               </div>
-              <input type="range" id="halfSplitSlider" min="10" max="90" step="1" value="54" class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
+              <input type="range" id="halfSplitSlider" min="10" max="90" step="1" value="54"
+                class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
             </div>
 
             <!-- Control para Línea Horizontal -->
@@ -277,19 +340,24 @@
               <div>
                 <div class="flex justify-between text-xs text-gray-400 mb-1">
                   <span class="flex items-center gap-1.5">
-                    <svg class="w-3.5 h-3.5 text-orangeCircuit" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                    <svg class="w-3.5 h-3.5 text-orangeCircuit" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                    </svg>
                     Posición vertical de la franja (Y)
                   </span>
                   <span id="eyesPosVal" class="text-orangeCircuit-soft font-mono font-bold">35%</span>
                 </div>
-                <input type="range" id="eyesPosSlider" min="5" max="85" step="1" value="35" class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
+                <input type="range" id="eyesPosSlider" min="5" max="85" step="1" value="35"
+                  class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
               </div>
               <div>
                 <div class="flex justify-between text-xs text-gray-400 mb-1">
                   <span>Alto / Grosor de la franja</span>
                   <span id="eyesHeightVal" class="text-orangeCircuit-soft font-mono font-bold">15%</span>
                 </div>
-                <input type="range" id="eyesHeightSlider" min="5" max="40" step="1" value="15" class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
+                <input type="range" id="eyesHeightSlider" min="5" max="40" step="1" value="15"
+                  class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
               </div>
             </div>
           </div>
@@ -297,16 +365,19 @@
           <!-- Ajustes Avanzados de la Foto -->
           <div class="mt-5 border-t border-burgundy-light/40 pt-4 space-y-4">
             <div class="flex justify-between items-center">
-              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Ajustar Posición de Imagen</span>
-              <button id="btnResetAdjust" class="text-xs text-orangeCircuit-soft hover:text-cream font-medium">Restablecer</button>
+              <span class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Ajustar Posición de
+                Imagen</span>
+              <button id="btnResetAdjust"
+                class="text-xs text-orangeCircuit-soft hover:text-cream font-medium">Restablecer</button>
             </div>
-            
+
             <div>
               <div class="flex justify-between text-xs text-gray-400 mb-1">
                 <span>Escala (Zoom)</span>
                 <span id="scaleVal">1.0x</span>
               </div>
-              <input type="range" id="scaleSlider" min="0.1" max="3" step="0.05" value="1" class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
+              <input type="range" id="scaleSlider" min="0.1" max="3" step="0.05" value="1"
+                class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
             </div>
 
             <div class="grid grid-cols-2 gap-4">
@@ -315,14 +386,16 @@
                   <span>Desplazar X</span>
                   <span id="offsetXVal">0px</span>
                 </div>
-                <input type="range" id="offsetXSlider" min="-500" max="500" step="1" value="0" class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
+                <input type="range" id="offsetXSlider" min="-500" max="500" step="1" value="0"
+                  class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
               </div>
               <div>
                 <div class="flex justify-between text-xs text-gray-400 mb-1">
                   <span>Desplazar Y</span>
                   <span id="offsetYVal">0px</span>
                 </div>
-                <input type="range" id="offsetYSlider" min="-500" max="500" step="1" value="0" class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
+                <input type="range" id="offsetYSlider" min="-500" max="500" step="1" value="0"
+                  class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
               </div>
             </div>
           </div>
@@ -332,49 +405,67 @@
 
       <!-- Columna Derecha: Vista Previa, Carga Integrada y Descarga -->
       <section class="order-1 lg:order-2 lg:col-span-7 flex flex-col items-center justify-start space-y-4 sm:space-y-6">
-        
+
         <!-- Input de archivo invisible accesible -->
         <input type="file" id="imageInput" accept="image/*" class="hidden">
 
         <!-- Contenedor del Lienzo con aspecto de alta definición y Carga Integrada -->
-        <div class="w-full bg-burgundy-dark border border-burgundy-light/50 rounded-2xl p-4 sm:p-6 shadow-xl flex flex-col items-center">
+        <div
+          class="w-full bg-burgundy-dark border border-burgundy-light/50 rounded-2xl p-4 sm:p-6 shadow-xl flex flex-col items-center">
           <div class="flex justify-between items-center w-full mb-3 sm:mb-4">
-            <h3 class="text-xs sm:text-sm font-semibold text-cream font-tech tracking-wider uppercase flex items-center gap-2">
+            <h3
+              class="text-xs sm:text-sm font-semibold text-cream font-tech tracking-wider uppercase flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-orangeCircuit"></span>
               Vista Previa y Foto
             </h3>
             <div class="flex items-center gap-2">
-              <button type="button" id="btnChangePhoto" class="text-[11px] bg-burgundy-deep hover:bg-burgundy-light border border-burgundy-light/70 text-orangeCircuit-soft hover:text-white px-2.5 py-1 rounded-lg transition-colors font-medium flex items-center gap-1.5">
-                <svg class="w-3.5 h-3.5 text-orangeCircuit" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+              <button type="button" id="btnChangePhoto"
+                class="text-[11px] bg-burgundy-deep hover:bg-burgundy-light border border-burgundy-light/70 text-orangeCircuit-soft hover:text-white px-2.5 py-1 rounded-lg transition-colors font-medium flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5 text-orangeCircuit" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                  </path>
+                </svg>
                 <span>Subir / Cambiar foto</span>
               </button>
-              <span class="text-[11px] sm:text-xs px-2 py-0.5 sm:py-1 rounded bg-burgundy-deep border border-burgundy-light/60 text-gray-400 font-mono hidden sm:inline-block">1080 × 1080 px</span>
+              <span
+                class="text-[11px] sm:text-xs px-2 py-0.5 sm:py-1 rounded bg-burgundy-deep border border-burgundy-light/60 text-gray-400 font-mono hidden sm:inline-block">1080
+                × 1080 px</span>
             </div>
           </div>
 
           <!-- Canvas Wrapper con relación de aspecto cuadrada perfecta y receptor de Drag & Drop -->
-          <div id="canvasWrapper" class="relative w-full max-w-[480px] aspect-square rounded-xl overflow-hidden border-2 border-dashed border-burgundy-light/80 hover:border-orangeCircuit/80 bg-burgundy-deep shadow-inner cursor-grab active:cursor-grabbing group transition-all">
+          <div id="canvasWrapper"
+            class="relative w-full max-w-[480px] aspect-square rounded-xl overflow-hidden border-2 border-dashed border-burgundy-light/80 hover:border-orangeCircuit/80 bg-burgundy-deep shadow-inner cursor-grab active:cursor-grabbing group transition-all">
             <canvas id="posterCanvas" class="w-full h-full block touch-none"></canvas>
-            
+
             <!-- Mensaje flotante cuando no hay imagen cargada (Tocar o arrastrar para subir) -->
-            <div id="noImageOverlay" class="absolute inset-0 bg-burgundy-deep/95 flex flex-col items-center justify-center p-6 text-center cursor-pointer pointer-events-auto transition-all duration-300 hover:bg-burgundy-deep/90">
-              <div class="w-16 h-16 rounded-full bg-orangeCircuit/10 border border-orangeCircuit/30 flex items-center justify-center mb-3 text-orangeCircuit-soft group-hover:scale-105 transition-transform">
+            <div id="noImageOverlay"
+              class="absolute inset-0 bg-burgundy-deep/95 flex flex-col items-center justify-center p-6 text-center cursor-pointer pointer-events-auto transition-all duration-300 hover:bg-burgundy-deep/90">
+              <div
+                class="w-16 h-16 rounded-full bg-orangeCircuit/10 border border-orangeCircuit/30 flex items-center justify-center mb-3 text-orangeCircuit-soft group-hover:scale-105 transition-transform">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                  </path>
                 </svg>
               </div>
               <p class="text-base font-bold text-white mb-1">Arrastra y suelta tu foto aquí</p>
               <p class="text-xs text-orangeCircuit-soft font-medium mb-1">o toca para seleccionarla de tu galería</p>
               <p class="text-[10px] text-gray-500 mb-3">Formatos soportados: JPG, PNG, WebP</p>
-              <span class="text-xs font-bold text-white bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft px-4 py-2 rounded-xl shadow-lg shadow-orangeCircuit/20 inline-flex items-center gap-1.5">
+              <span
+                class="text-xs font-bold text-white bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft px-4 py-2 rounded-xl shadow-lg shadow-orangeCircuit/20 inline-flex items-center gap-1.5">
                 📷 Elegir Fotografía
               </span>
             </div>
-            
+
             <!-- Overlay de Ayuda visual sutil al pasar el cursor o en móvil -->
-            <div class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-burgundy-deep/90 backdrop-blur-md text-[10px] sm:text-[11px] text-cream px-3 py-1.5 rounded-full pointer-events-none opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-1.5 whitespace-nowrap">
+            <div
+              class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-burgundy-deep/90 backdrop-blur-md text-[10px] sm:text-[11px] text-cream px-3 py-1.5 rounded-full pointer-events-none opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-1.5 whitespace-nowrap">
               <svg class="w-3.5 h-3.5 text-orangeCircuit" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 013 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 013 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1">
+                </path>
               </svg>
               Arrastra o pellizca para mover la foto
             </div>
@@ -383,19 +474,25 @@
           <!-- Acciones Rápidas del Canvas -->
           <div class="w-full max-w-[480px] mt-5 space-y-3">
             <!-- Selector de formato PNG / JPG -->
-            <div class="flex items-center justify-between bg-burgundy-deep/70 border border-burgundy-light/40 rounded-xl px-4 py-2.5">
+            <div
+              class="flex items-center justify-between bg-burgundy-deep/70 border border-burgundy-light/40 rounded-xl px-4 py-2.5">
               <span class="text-xs font-semibold text-gray-300 flex items-center gap-1.5">
                 <svg class="w-4 h-4 text-orangeCircuit" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                  </path>
                 </svg>
                 Formato de descarga:
               </span>
-              <div class="inline-flex p-1 rounded-lg bg-burgundy border border-burgundy-light/60 text-xs font-bold gap-1">
-                <button type="button" id="btnFormatPng" class="px-3 py-1 rounded-md transition-all bg-orangeCircuit text-white shadow-sm flex items-center gap-1">
+              <div
+                class="inline-flex p-1 rounded-lg bg-burgundy border border-burgundy-light/60 text-xs font-bold gap-1">
+                <button type="button" id="btnFormatPng"
+                  class="px-3 py-1 rounded-md transition-all bg-orangeCircuit text-white shadow-sm flex items-center gap-1">
                   <span>PNG</span>
                   <span class="text-[9px] opacity-80 font-mono">HD</span>
                 </button>
-                <button type="button" id="btnFormatJpg" class="px-3 py-1 rounded-md transition-all text-gray-400 hover:text-white flex items-center gap-1">
+                <button type="button" id="btnFormatJpg"
+                  class="px-3 py-1 rounded-md transition-all text-gray-400 hover:text-white flex items-center gap-1">
                   <span>JPG</span>
                   <span class="text-[9px] opacity-80 font-mono">95%</span>
                 </button>
@@ -403,31 +500,42 @@
             </div>
 
             <!-- Botón principal de descarga -->
-            <button id="btnDownload" class="w-full bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft hover:from-orangeCircuit/90 hover:to-orangeCircuit-soft/90 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg shadow-orangeCircuit/20 hover:shadow-orangeCircuit/30 flex items-center justify-center gap-2 text-sm">
+            <button id="btnDownload"
+              class="w-full bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft hover:from-orangeCircuit/90 hover:to-orangeCircuit-soft/90 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg shadow-orangeCircuit/20 hover:shadow-orangeCircuit/30 flex items-center justify-center gap-2 text-sm">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
               </svg>
               <span id="downloadBtnText">Descargar en PNG (Alta Definición)</span>
             </button>
 
             <!-- Alerta informativa de privacidad y seguridad local -->
-            <p class="text-[11px] text-gray-400 mt-2 flex items-start gap-2 bg-burgundy-deep/60 p-3 rounded-xl border border-burgundy-light/40">
-              <svg class="w-4 h-4 text-orangeCircuit-soft shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            <p
+              class="text-[11px] text-gray-400 mt-2 flex items-start gap-2 bg-burgundy-deep/60 p-3 rounded-xl border border-burgundy-light/40">
+              <svg class="w-4 h-4 text-orangeCircuit-soft shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
-              <span>Tus datos y fotos están seguros. No se almacenan ni suben a ningún servidor. Todo el procesamiento se realiza en tu navegador web.</span>
+              <span>Tus datos y fotos están seguros. No se almacenan ni suben a ningún servidor. Todo el procesamiento
+                se realiza en tu navegador web.</span>
             </p>
           </div>
         </div>
 
         <!-- Guías para Compartir en Redes -->
-        <div class="w-full max-w-[530px] border border-orangeCircuit/40 bg-gradient-to-br from-burgundy-dark/95 via-burgundy-deep/90 to-[#180408] p-4 sm:p-5 rounded-2xl shadow-xl shadow-black/40 relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-orangeCircuit/10 rounded-full blur-2xl pointer-events-none"></div>
-          
+        <div
+          class="w-full max-w-[530px] border border-orangeCircuit/40 bg-gradient-to-br from-burgundy-dark/95 via-burgundy-deep/90 to-[#180408] p-4 sm:p-5 rounded-2xl shadow-xl shadow-black/40 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-orangeCircuit/10 rounded-full blur-2xl pointer-events-none">
+          </div>
+
           <div class="flex items-center gap-2 mb-2.5">
-            <span class="p-1.5 rounded-lg bg-orangeCircuit/20 text-orangeCircuit border border-orangeCircuit/30 shrink-0">
+            <span
+              class="p-1.5 rounded-lg bg-orangeCircuit/20 text-orangeCircuit border border-orangeCircuit/30 shrink-0">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z">
+                </path>
               </svg>
             </span>
             <span class="font-bold text-cream tracking-wide text-sm font-tech">Consejo para compartir:</span>
@@ -440,7 +548,9 @@
             </p>
             <p class="flex items-start gap-2">
               <span class="text-orangeCircuit font-bold shrink-0 mt-0.5">•</span>
-              <span>Usa los hashtags oficiales <strong class="text-orangeCircuit-soft font-bold font-mono tracking-wide">#RELOAD #ELAD26</strong> para ganar visibilidad.</span>
+              <span>Usa los hashtags oficiales <strong
+                  class="text-orangeCircuit-soft font-bold font-mono tracking-wide">#RELOAD #ELAD26</strong> para ganar
+                visibilidad.</span>
             </p>
           </div>
         </div>
@@ -450,71 +560,91 @@
     </main>
 
     <!-- Modal de Éxito / Feedback Dinámico -->
-    <div id="successModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
-      <div class="bg-burgundy-dark border border-burgundy-light rounded-2xl max-w-md w-full p-6 text-center shadow-2xl relative">
-        <div class="w-16 h-16 bg-orangeCircuit/10 border border-orangeCircuit/30 rounded-full flex items-center justify-center mx-auto mb-4 text-cream">
+    <div id="successModal"
+      class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden">
+      <div
+        class="bg-burgundy-dark border border-burgundy-light rounded-2xl max-w-md w-full p-6 text-center shadow-2xl relative">
+        <div
+          class="w-16 h-16 bg-orangeCircuit/10 border border-orangeCircuit/30 rounded-full flex items-center justify-center mx-auto mb-4 text-cream">
           <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
           </svg>
         </div>
         <h3 class="text-xl font-bold font-tech text-white mb-1">¡Poster Listo para Compartir!</h3>
         <p class="text-xs text-gray-400 mb-5">Tu imagen se ha exportado con éxito en alta resolución.</p>
-        
-        <div class="bg-burgundy-deep border border-orangeCircuit/30 p-3.5 rounded-xl text-xs text-gray-200 text-left space-y-2 mb-6">
+
+        <div
+          class="bg-burgundy-deep border border-orangeCircuit/30 p-3.5 rounded-xl text-xs text-gray-200 text-left space-y-2 mb-6">
           <p class="font-semibold text-cream flex items-center gap-1.5 font-tech text-sm">
             <span class="text-orangeCircuit">💡</span> Consejo para compartir:
           </p>
           <p class="text-gray-300 pl-1">• Sube tu imagen generada a tu perfil de redes sociales.</p>
-          <p class="text-gray-300 pl-1">• Usa los hashtags oficiales <strong class="text-orangeCircuit-soft font-bold font-mono">#RELOAD #ELAD26</strong> para ganar visibilidad.</p>
+          <p class="text-gray-300 pl-1">• Usa los hashtags oficiales <strong
+              class="text-orangeCircuit-soft font-bold font-mono">#RELOAD #ELAD26</strong> para ganar visibilidad.</p>
         </div>
 
-        <button id="btnCloseModal" class="w-full bg-burgundy-light hover:bg-burgundy text-white font-semibold py-3 px-4 rounded-xl transition-colors text-sm">
+        <button id="btnCloseModal"
+          class="w-full bg-burgundy-light hover:bg-burgundy text-white font-semibold py-3 px-4 rounded-xl transition-colors text-sm">
           Entendido, volver al editor
         </button>
       </div>
     </div>
 
     <!-- ================= MODAL DE LOGIN CONTROL INTERNO ================= -->
-    <div id="internalControlLoginModal" class="fixed inset-0 bg-black/85 backdrop-blur-md z-[210] flex items-center justify-center p-4 transition-all duration-500 hidden">
-      <div class="max-w-md w-full bg-burgundy-dark border border-orangeCircuit/40 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-        <div class="absolute -right-16 -top-16 w-36 h-36 bg-orangeCircuit/15 rounded-full blur-2xl pointer-events-none"></div>
-        
-        <button id="btnCloseControlLogin" class="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors p-1">
+    <div id="internalControlLoginModal"
+      class="fixed inset-0 bg-black/85 backdrop-blur-md z-[210] flex items-center justify-center p-4 transition-all duration-500 hidden">
+      <div
+        class="max-w-md w-full bg-burgundy-dark border border-orangeCircuit/40 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+        <div class="absolute -right-16 -top-16 w-36 h-36 bg-orangeCircuit/15 rounded-full blur-2xl pointer-events-none">
+        </div>
+
+        <button id="btnCloseControlLogin"
+          class="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors p-1">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
 
         <div class="text-center mb-6">
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orangeCircuit via-burgundy to-orangeCircuit-soft flex items-center justify-center shadow-lg shadow-orangeCircuit/20 mx-auto mb-3 text-2xl">
+          <div
+            class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orangeCircuit via-burgundy to-orangeCircuit-soft flex items-center justify-center shadow-lg shadow-orangeCircuit/20 mx-auto mb-3 text-2xl">
             📊
           </div>
           <h2 class="text-2xl font-bold font-tech text-cream tracking-tight">CONTROL INTERNO</h2>
-          <p class="text-xs text-gray-400 mt-1.5">Inicia sesión con correo y contraseña autorizados para consultar el panel de estadísticas y uso en tiempo real.</p>
+          <p class="text-xs text-gray-400 mt-1.5">Inicia sesión con correo y contraseña autorizados para consultar el
+            panel de estadísticas y uso en tiempo real.</p>
         </div>
 
         <form id="controlLoginForm" class="space-y-4" onsubmit="return false;">
           <div>
-            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Correo de Control</label>
-            <input type="email" id="controlEmailInput" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
+            <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Correo de
+              Control</label>
+            <input type="email" id="controlEmailInput"
+              class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all">
             <p class="text-[11px] text-gray-400 mt-1.5 font-normal">Ejemplo: nombre@mail.com</p>
           </div>
 
           <div>
             <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Contraseña</label>
             <div class="relative">
-              <input type="password" id="controlPasswordInput" class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all pr-10">
-              <button type="button" id="btnToggleControlPass" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-xs p-1" title="Mostrar/Ocultar contraseña">
+              <input type="password" id="controlPasswordInput"
+                class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all pr-10">
+              <button type="button" id="btnToggleControlPass"
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white text-xs p-1"
+                title="Mostrar/Ocultar contraseña">
                 👁️
               </button>
             </div>
-            <p id="controlLoginError" class="text-xs text-red-400 mt-2 hidden">Credenciales incorrectas. Verifica tu correo y contraseña.</p>
+            <p id="controlLoginError" class="text-xs text-red-400 mt-2 hidden">Credenciales incorrectas. Verifica tu
+              correo y contraseña.</p>
           </div>
 
-          <button type="submit" id="btnSubmitControlLogin" class="w-full bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft hover:from-orangeCircuit/90 hover:to-orangeCircuit-soft/90 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-orangeCircuit/20 flex items-center justify-center gap-2 text-sm">
+          <button type="submit" id="btnSubmitControlLogin"
+            class="w-full bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft hover:from-orangeCircuit/90 hover:to-orangeCircuit-soft/90 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg shadow-orangeCircuit/20 flex items-center justify-center gap-2 text-sm">
             <span>Ingresar a Estadísticas</span>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3">
+              </path>
             </svg>
           </button>
         </form>
@@ -522,37 +652,48 @@
     </div>
 
     <!-- ================= MODAL DEL DASHBOARD DE ESTADÍSTICAS ================= -->
-    <div id="internalControlDashboardModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[220] flex items-center justify-center p-3 sm:p-6 transition-all duration-500 overflow-y-auto hidden">
-      <div class="max-w-5xl w-full bg-[#150308] border border-orangeCircuit/40 rounded-3xl p-5 sm:p-8 shadow-2xl relative my-auto max-h-[92vh] flex flex-col">
-        
+    <div id="internalControlDashboardModal"
+      class="fixed inset-0 bg-black/90 backdrop-blur-md z-[220] flex items-center justify-center p-3 sm:p-6 transition-all duration-500 overflow-y-auto hidden">
+      <div
+        class="max-w-5xl w-full bg-[#150308] border border-orangeCircuit/40 rounded-3xl p-5 sm:p-8 shadow-2xl relative my-auto max-h-[92vh] flex flex-col">
+
         <!-- Encabezado del Dashboard -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-5 border-b border-burgundy-light/40 shrink-0">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-5 border-b border-burgundy-light/40 shrink-0">
           <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orangeCircuit via-burgundy to-orangeCircuit-soft flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-orangeCircuit/20 shrink-0">
+            <div
+              class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orangeCircuit via-burgundy to-orangeCircuit-soft flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-orangeCircuit/20 shrink-0">
               📊
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <h2 class="text-xl sm:text-2xl font-bold font-tech text-cream tracking-tight">CONTROL INTERNO • ESTADÍSTICAS</h2>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                <h2 class="text-xl sm:text-2xl font-bold font-tech text-cream tracking-tight">CONTROL INTERNO •
+                  ESTADÍSTICAS</h2>
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> EN LÍNEA
                 </span>
               </div>
-              <p class="text-xs text-gray-400 mt-0.5">Telemetría de interacción y generación de posters para el evento RELOAD / ELAD 2026</p>
+              <p class="text-xs text-gray-400 mt-0.5">Telemetría de interacción y generación de posters para el evento
+                RELOAD / ELAD 2026</p>
             </div>
           </div>
 
           <div class="flex items-center gap-2 self-end sm:self-auto flex-wrap">
-            <button id="btnSyncCloudStats" title="Sincronizar telemetría anónima global de todos los equipos" class="bg-orangeCircuit/15 hover:bg-orangeCircuit/25 border border-orangeCircuit/40 text-orangeCircuit-soft text-xs font-semibold py-2 px-3 rounded-xl transition-all flex items-center gap-1.5 shadow-sm">
+            <button id="btnSyncCloudStats" title="Sincronizar telemetría anónima global de todos los equipos"
+              class="bg-orangeCircuit/15 hover:bg-orangeCircuit/25 border border-orangeCircuit/40 text-orangeCircuit-soft text-xs font-semibold py-2 px-3 rounded-xl transition-all flex items-center gap-1.5 shadow-sm">
               <span id="syncIcon">🔄</span> <span>Sincronizar Nube</span>
             </button>
-            <button id="btnExportStatsReport" class="bg-burgundy border border-burgundy-light text-gray-300 hover:text-white hover:border-orangeCircuit/50 text-xs font-semibold py-2 px-3 rounded-xl transition-all flex items-center gap-1.5">
+            <button id="btnExportStatsReport"
+              class="bg-burgundy border border-burgundy-light text-gray-300 hover:text-white hover:border-orangeCircuit/50 text-xs font-semibold py-2 px-3 rounded-xl transition-all flex items-center gap-1.5">
               <span>📥</span> Exportar JSON
             </button>
-            <button id="btnLogoutControl" class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-300 text-xs font-semibold py-2 px-3 rounded-xl transition-all">
+            <button id="btnLogoutControl"
+              class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-300 text-xs font-semibold py-2 px-3 rounded-xl transition-all">
               Cerrar Sesión
             </button>
-            <button id="btnCloseControlDashboard" class="text-gray-400 hover:text-white p-1.5 rounded-xl hover:bg-burgundy-dark transition-colors">
+            <button id="btnCloseControlDashboard"
+              class="text-gray-400 hover:text-white p-1.5 rounded-xl hover:bg-burgundy-dark transition-colors">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
               </svg>
@@ -562,7 +703,7 @@
 
         <!-- Contenido scrolleable del Dashboard -->
         <div class="overflow-y-auto space-y-6 pt-5 pr-1 flex-grow">
-          
+
           <!-- Tarjetas KPI Principales -->
           <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             <!-- KPI 1 -->
@@ -611,7 +752,8 @@
                 <span class="p-1.5 rounded-lg bg-orangeCircuit/10 text-orangeCircuit text-xs">⚡</span>
               </div>
               <div class="mt-2 flex items-baseline gap-2">
-                <span id="kpiTopEffect" class="text-lg sm:text-2xl font-bold font-tech text-orangeCircuit">RGB Glitch</span>
+                <span id="kpiTopEffect" class="text-lg sm:text-2xl font-bold font-tech text-orangeCircuit">RGB
+                  Glitch</span>
               </div>
               <p id="kpiTopEffectDetail" class="text-[10px] text-gray-400 mt-1">Mayor preferencia</p>
             </div>
@@ -619,7 +761,7 @@
 
           <!-- Gráficos de Distribución (Formatos, Efectos, Layouts, Roles) -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
+
             <!-- Card: Formatos de Exportación (PNG vs JPG) -->
             <div class="bg-burgundy-dark/70 border border-burgundy-light/50 p-4 sm:p-5 rounded-2xl space-y-3">
               <div class="flex justify-between items-center">
@@ -628,7 +770,7 @@
                 </h3>
                 <span id="totalFormatSum" class="text-xs font-mono text-gray-400">0 descargas</span>
               </div>
-              
+
               <div class="space-y-2.5 pt-1">
                 <div>
                   <div class="flex justify-between text-xs mb-1">
@@ -636,7 +778,9 @@
                     <span id="pctPng" class="text-orangeCircuit font-bold font-mono">0% (0)</span>
                   </div>
                   <div class="w-full bg-burgundy-deep rounded-full h-2.5 overflow-hidden">
-                    <div id="barPng" class="bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft h-2.5 rounded-full transition-all duration-700" style="width: 0%"></div>
+                    <div id="barPng"
+                      class="bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft h-2.5 rounded-full transition-all duration-700"
+                      style="width: 0%"></div>
                   </div>
                 </div>
 
@@ -646,7 +790,9 @@
                     <span id="pctJpg" class="text-orangeCircuit-soft font-bold font-mono">0% (0)</span>
                   </div>
                   <div class="w-full bg-burgundy-deep rounded-full h-2.5 overflow-hidden">
-                    <div id="barJpg" class="bg-gradient-to-r from-pink-500 to-rose-400 h-2.5 rounded-full transition-all duration-700" style="width: 0%"></div>
+                    <div id="barJpg"
+                      class="bg-gradient-to-r from-pink-500 to-rose-400 h-2.5 rounded-full transition-all duration-700"
+                      style="width: 0%"></div>
                   </div>
                 </div>
               </div>
@@ -662,19 +808,23 @@
               </div>
 
               <div class="grid grid-cols-2 gap-2 text-xs pt-1">
-                <div class="bg-burgundy-deep/60 p-2.5 rounded-xl border border-burgundy-light/30 flex justify-between items-center">
+                <div
+                  class="bg-burgundy-deep/60 p-2.5 rounded-xl border border-burgundy-light/30 flex justify-between items-center">
                   <span class="text-gray-300">Participante</span>
                   <span id="countRoleParticipante" class="font-bold font-tech text-white">0</span>
                 </div>
-                <div class="bg-burgundy-deep/60 p-2.5 rounded-xl border border-burgundy-light/30 flex justify-between items-center">
+                <div
+                  class="bg-burgundy-deep/60 p-2.5 rounded-xl border border-burgundy-light/30 flex justify-between items-center">
                   <span class="text-gray-300">Ponente</span>
                   <span id="countRolePonente" class="font-bold font-tech text-white">0</span>
                 </div>
-                <div class="bg-burgundy-deep/60 p-2.5 rounded-xl border border-burgundy-light/30 flex justify-between items-center">
+                <div
+                  class="bg-burgundy-deep/60 p-2.5 rounded-xl border border-burgundy-light/30 flex justify-between items-center">
                   <span class="text-gray-300">Staff</span>
                   <span id="countRoleStaff" class="font-bold font-tech text-white">0</span>
                 </div>
-                <div class="bg-burgundy-deep/60 p-2.5 rounded-xl border border-burgundy-light/30 flex justify-between items-center">
+                <div
+                  class="bg-burgundy-deep/60 p-2.5 rounded-xl border border-burgundy-light/30 flex justify-between items-center">
                   <span class="text-gray-300">Organizador</span>
                   <span id="countRoleOrganizador" class="font-bold font-tech text-white">0</span>
                 </div>
@@ -693,7 +843,8 @@
                     <span id="pctGlitch" class="font-mono text-orangeCircuit font-bold">0%</span>
                   </div>
                   <div class="w-full bg-burgundy-deep rounded-full h-2 overflow-hidden">
-                    <div id="barGlitch" class="bg-orangeCircuit h-2 rounded-full transition-all duration-700" style="width: 0%"></div>
+                    <div id="barGlitch" class="bg-orangeCircuit h-2 rounded-full transition-all duration-700"
+                      style="width: 0%"></div>
                   </div>
                 </div>
                 <div>
@@ -702,7 +853,8 @@
                     <span id="pctTerminal" class="font-mono text-emerald-400 font-bold">0%</span>
                   </div>
                   <div class="w-full bg-burgundy-deep rounded-full h-2 overflow-hidden">
-                    <div id="barTerminal" class="bg-emerald-500 h-2 rounded-full transition-all duration-700" style="width: 0%"></div>
+                    <div id="barTerminal" class="bg-emerald-500 h-2 rounded-full transition-all duration-700"
+                      style="width: 0%"></div>
                   </div>
                 </div>
                 <div>
@@ -711,7 +863,8 @@
                     <span id="pctColorNone" class="font-mono text-gray-400 font-bold">0%</span>
                   </div>
                   <div class="w-full bg-burgundy-deep rounded-full h-2 overflow-hidden">
-                    <div id="barColorNone" class="bg-gray-500 h-2 rounded-full transition-all duration-700" style="width: 0%"></div>
+                    <div id="barColorNone" class="bg-gray-500 h-2 rounded-full transition-all duration-700"
+                      style="width: 0%"></div>
                   </div>
                 </div>
               </div>
@@ -729,7 +882,8 @@
                     <span id="pctLayoutHalf" class="font-mono text-pink-400 font-bold">0%</span>
                   </div>
                   <div class="w-full bg-burgundy-deep rounded-full h-2 overflow-hidden">
-                    <div id="barLayoutHalf" class="bg-pink-500 h-2 rounded-full transition-all duration-700" style="width: 0%"></div>
+                    <div id="barLayoutHalf" class="bg-pink-500 h-2 rounded-full transition-all duration-700"
+                      style="width: 0%"></div>
                   </div>
                 </div>
                 <div>
@@ -738,7 +892,8 @@
                     <span id="pctLayoutEyes" class="font-mono text-indigo-400 font-bold">0%</span>
                   </div>
                   <div class="w-full bg-burgundy-deep rounded-full h-2 overflow-hidden">
-                    <div id="barLayoutEyes" class="bg-indigo-500 h-2 rounded-full transition-all duration-700" style="width: 0%"></div>
+                    <div id="barLayoutEyes" class="bg-indigo-500 h-2 rounded-full transition-all duration-700"
+                      style="width: 0%"></div>
                   </div>
                 </div>
                 <div>
@@ -747,7 +902,8 @@
                     <span id="pctLayoutFull" class="font-mono text-orangeCircuit-soft font-bold">0%</span>
                   </div>
                   <div class="w-full bg-burgundy-deep rounded-full h-2 overflow-hidden">
-                    <div id="barLayoutFull" class="bg-orangeCircuit-soft h-2 rounded-full transition-all duration-700" style="width: 0%"></div>
+                    <div id="barLayoutFull" class="bg-orangeCircuit-soft h-2 rounded-full transition-all duration-700"
+                      style="width: 0%"></div>
                   </div>
                 </div>
               </div>
@@ -772,15 +928,18 @@
           </div>
 
           <!-- Acciones de Administración y Mantenimiento -->
-          <div class="flex flex-wrap items-center justify-between gap-3 pt-2 pb-1 border-t border-burgundy-light/30 text-xs">
+          <div
+            class="flex flex-wrap items-center justify-between gap-3 pt-2 pb-1 border-t border-burgundy-light/30 text-xs">
             <div class="text-gray-400 flex items-center gap-1.5">
               <span>💾 Datos sincronizados localmente en este navegador.</span>
             </div>
             <div class="flex items-center gap-2">
-              <button id="btnSeedDemoData" class="bg-orangeCircuit/10 hover:bg-orangeCircuit/20 border border-orangeCircuit/30 text-orangeCircuit-soft font-semibold py-1.5 px-3 rounded-lg transition-colors">
+              <button id="btnSeedDemoData"
+                class="bg-orangeCircuit/10 hover:bg-orangeCircuit/20 border border-orangeCircuit/30 text-orangeCircuit-soft font-semibold py-1.5 px-3 rounded-lg transition-colors">
                 🎲 Cargar Datos de Prueba
               </button>
-              <button id="btnResetStats" class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-semibold py-1.5 px-3 rounded-lg transition-colors">
+              <button id="btnResetStats"
+                class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-semibold py-1.5 px-3 rounded-lg transition-colors">
                 🗑️ Reiniciar Contadores
               </button>
             </div>
@@ -830,7 +989,7 @@
     const nameInput = document.getElementById('nameInput');
     const handleInput = document.getElementById('handleInput');
     const roleInput = document.getElementById('roleInput');
-    
+
     // Controles Deslizantes de Posición
     const scaleSlider = document.getElementById('scaleSlider');
     const offsetXSlider = document.getElementById('offsetXSlider');
@@ -839,15 +998,15 @@
     const offsetXVal = document.getElementById('offsetXVal');
     const offsetYVal = document.getElementById('offsetYVal');
     const btnResetAdjust = document.getElementById('btnResetAdjust');
-    
+
     // Canvas y Descargas
     const canvas = document.getElementById('posterCanvas');
     const ctx = canvas.getContext('2d');
     const noImageOverlay = document.getElementById('noImageOverlay');
     const btnDownload = document.getElementById('btnDownload');
-    
+
     // Modal
-const successModal = document.getElementById('successModal');
+    const successModal = document.getElementById('successModal');
     const btnCloseModal = document.getElementById('btnCloseModal');
 
     // Dimensiones internas del Canvas (Optimizadas para exportación HD)
@@ -881,7 +1040,7 @@ const successModal = document.getElementById('successModal');
     let imgScale = 1.0;
     let imgOffsetX = 0;
     let imgOffsetY = 0;
-    
+
     // Variables para interacción táctil/arrastre en canvas
     let isDragging = false;
     let startX = 0;
@@ -945,7 +1104,7 @@ const successModal = document.getElementById('successModal');
 
         // Ocultar modal
         closeGateModal();
-        
+
         render();
       } else {
         gateErrorMessage.textContent = "El correo electrónico no pertenece al Staff u Organizadores.";
@@ -994,7 +1153,7 @@ const successModal = document.getElementById('successModal');
       currentSession.role = "PARTICIPANTE";
       currentSession.isAdminVerified = false;
       currentSession.verifiedEmail = "";
-      
+
       currentSession.name = "";
       currentSession.handle = "";
       nameInput.value = "";
@@ -1086,9 +1245,9 @@ const successModal = document.getElementById('successModal');
       }
 
       const reader = new FileReader();
-      reader.onload = function(event) {
+      reader.onload = function (event) {
         const img = new Image();
-        img.onload = function() {
+        img.onload = function () {
           userImage = img;
           noImageOverlay.classList.add('opacity-0');
           setTimeout(() => noImageOverlay.classList.add('hidden'), 300);
@@ -1133,7 +1292,7 @@ const successModal = document.getElementById('successModal');
         e.preventDefault();
         e.stopPropagation();
         canvasWrapper.classList.remove('border-orangeCircuit', 'bg-orangeCircuit/10', 'ring-2', 'ring-orangeCircuit/60');
-        
+
         if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
           processImageFile(e.dataTransfer.files[0]);
         }
@@ -1152,21 +1311,21 @@ const successModal = document.getElementById('successModal');
 
     function resetTransformation(img) {
       if (!img) return;
-      
+
       const scaleX = CANVAS_WIDTH / img.width;
       const scaleY = CANVAS_HEIGHT / img.height;
       imgScale = Math.max(scaleX, scaleY);
-      
+
       imgOffsetX = 0;
       imgOffsetY = 0;
 
       scaleSlider.value = imgScale.toFixed(2);
       scaleSlider.min = (imgScale * 0.25).toFixed(2);
       scaleSlider.max = (imgScale * 3).toFixed(2);
-      
+
       offsetXSlider.value = 0;
       offsetYSlider.value = 0;
-      
+
       updateSliderLabels();
     }
 
@@ -1178,7 +1337,7 @@ const successModal = document.getElementById('successModal');
 
     nameInput.addEventListener('input', render);
     handleInput.addEventListener('input', render);
-    
+
     roleInput.addEventListener('change', (e) => {
       const val = e.target.value;
       if (val === "LOCKED") {
@@ -1289,8 +1448,8 @@ const successModal = document.getElementById('successModal');
 
     // Grupo 2: Efecto de color (toggle: clic de nuevo desactiva)
     const effectButtons = [
-      { btn: document.getElementById('btnEffectGlitch'),    type: 'glitch' },
-      { btn: document.getElementById('btnEffectTerminal'),  type: 'terminal' },
+      { btn: document.getElementById('btnEffectGlitch'), type: 'glitch' },
+      { btn: document.getElementById('btnEffectTerminal'), type: 'terminal' },
     ];
 
     effectButtons.forEach(item => {
@@ -1338,10 +1497,10 @@ const successModal = document.getElementById('successModal');
       const rect = canvas.getBoundingClientRect();
       const clientX = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
       const clientY = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
-      
+
       const scaleX = CANVAS_WIDTH / rect.width;
       const scaleY = CANVAS_HEIGHT / rect.height;
-      
+
       return {
         x: (clientX - rect.left) * scaleX,
         y: (clientY - rect.top) * scaleY
@@ -1396,14 +1555,14 @@ const successModal = document.getElementById('successModal');
       if (!isDragging) return;
       if (e.cancelable) e.preventDefault();
       const coords = getCanvasCoordinates(e);
-      
+
       imgOffsetX = coords.x - startX;
       imgOffsetY = coords.y - startY;
 
       offsetXSlider.value = imgOffsetX;
       offsetYSlider.value = imgOffsetY;
       updateSliderLabels();
-      
+
       render();
     }
 
@@ -1517,7 +1676,7 @@ const successModal = document.getElementById('successModal');
       ctx.save();
       ctx.fillStyle = gradient;
       ctx.fillRect(splitX, 0, splitW, CANVAS_HEIGHT);
-      
+
       ctx.strokeStyle = 'rgba(255, 102, 0, 0.35)'; // Naranja sutil
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -1554,7 +1713,7 @@ const successModal = document.getElementById('successModal');
 
     function drawFullCyberFilter() {
       const grad = ctx.createRadialGradient(
-        CANVAS_WIDTH * 0.7, CANVAS_HEIGHT * 0.3, 100, 
+        CANVAS_WIDTH * 0.7, CANVAS_HEIGHT * 0.3, 100,
         CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.5, CANVAS_WIDTH * 0.8
       );
       grad.addColorStop(0, 'rgba(255, 138, 101, 0.28)');
@@ -1616,14 +1775,14 @@ const successModal = document.getElementById('successModal');
             const srcR = ((x - shift - chromaShiftR) % rw + rw) % rw;
             const srcB = ((x - shift - chromaShiftB) % rw + rw) % rw;
 
-            data[dstIdx]     = rowBuffer[srcR * 4];
+            data[dstIdx] = rowBuffer[srcR * 4];
             data[dstIdx + 1] = rowBuffer[((x - shift + rw) % rw) * 4 + 1];
             data[dstIdx + 2] = rowBuffer[srcB * 4 + 2];
             data[dstIdx + 3] = rowBuffer[((x - shift + rw) % rw) * 4 + 3];
           }
         }
         ctx.putImageData(imgData, rx, ry);
-      } catch(e) {
+      } catch (e) {
         console.error("Fallo al aplicar efecto Glitch:", e);
       }
 
@@ -1689,7 +1848,7 @@ const successModal = document.getElementById('successModal');
         orig.set(data);
 
         for (let i = 0; i < data.length; i += 4) {
-          let bright = 0.299 * orig[i] + 0.587 * orig[i+1] + 0.114 * orig[i+2];
+          let bright = 0.299 * orig[i] + 0.587 * orig[i + 1] + 0.114 * orig[i + 2];
           let factor = Math.pow(bright / 255, 1.1);
 
           let amberR = Math.min(255, factor * 255 + 20);
@@ -1698,12 +1857,12 @@ const successModal = document.getElementById('successModal');
 
           // Blend ultra suave (8% fósforo, 92% original) para máxima transparencia
           let blend = 0.08;
-          data[i]   = Math.round(orig[i]   * (1 - blend) + amberR * blend);
-          data[i+1] = Math.round(orig[i+1] * (1 - blend) + amberG * blend);
-          data[i+2] = Math.round(orig[i+2] * (1 - blend) + amberB * blend);
+          data[i] = Math.round(orig[i] * (1 - blend) + amberR * blend);
+          data[i + 1] = Math.round(orig[i + 1] * (1 - blend) + amberG * blend);
+          data[i + 2] = Math.round(orig[i + 2] * (1 - blend) + amberB * blend);
         }
         ctx.putImageData(imgData, rx, ry);
-      } catch(e) {
+      } catch (e) {
         console.error("Fallo al aplicar efecto Terminal Ámbar:", e);
       }
 
@@ -1890,7 +2049,7 @@ const successModal = document.getElementById('successModal');
 
     function drawEventGridAndFrame() {
       ctx.save();
-      
+
       const margin = 35;
       const length = 25;
       ctx.strokeStyle = 'rgba(255, 102, 0, 0.25)'; // Naranja Circuito sutil
@@ -1931,10 +2090,10 @@ const successModal = document.getElementById('successModal');
 
       // ================= CAPA DE PROTECCIÓN DE TEXTO (Siempre Borgoña) =================
       const textProtectGrad = ctx.createLinearGradient(0, 0, CANVAS_WIDTH * 0.65, 0);
-      textProtectGrad.addColorStop(0, 'rgba(31, 4, 9, 0.88)');  
-      textProtectGrad.addColorStop(0.5, 'rgba(74, 14, 26, 0.45)');  
-      textProtectGrad.addColorStop(1, 'rgba(74, 14, 26, 0)');      
-      
+      textProtectGrad.addColorStop(0, 'rgba(31, 4, 9, 0.88)');
+      textProtectGrad.addColorStop(0.5, 'rgba(74, 14, 26, 0.45)');
+      textProtectGrad.addColorStop(1, 'rgba(74, 14, 26, 0)');
+
       ctx.fillStyle = textProtectGrad;
       ctx.fillRect(0, 0, CANVAS_WIDTH * 0.7, CANVAS_HEIGHT);
 
@@ -1949,7 +2108,7 @@ const successModal = document.getElementById('successModal');
       ctx.fillStyle = '#FFFFFF';
       ctx.font = 'bold 44px "Montserrat", sans-serif';
       ctx.fillText("#ELAD26", 100, 345);
-      
+
       ctx.fillStyle = '#FFFFFF'; // Blanco como #ELAD26
       ctx.font = 'bold 20px "Montserrat", sans-serif';
       ctx.fillText("VI ENCUENTRO LATINOAMERICANO", 100, 395);
@@ -1962,7 +2121,7 @@ const successModal = document.getElementById('successModal');
 
       ctx.fillStyle = '#FF8A65'; // Naranja Suave — fecha
       ctx.font = '500 28px "Roboto", sans-serif';
-      ctx.fillText("Diciembre 2, 3 y 4, 2026", 100, 508);
+      ctx.fillText("Diciembre 1, 2 y 3 , 2026", 100, 508);
       ctx.font = '500 19px "Roboto", sans-serif';
       ctx.fillText("Miembro Oficial", 100, 540);
 
@@ -2012,7 +2171,7 @@ const successModal = document.getElementById('successModal');
       ctx.textBaseline = 'alphabetic';
       ctx.fillStyle = '#FFFFFF';
       ctx.font = 'bold 54px "Montserrat", sans-serif';
-      
+
       const words = nameText.split(' ');
       if (words.length > 2) {
         const firstLine = words.slice(0, 2).join(' ');
@@ -2086,10 +2245,10 @@ const successModal = document.getElementById('successModal');
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        
+
         const filenameSafe = (nameInput.value || "participante").trim().toLowerCase().replace(/[^a-z0-9]/g, "_");
         a.download = `elad26_${filenameSafe}.${extension}`;
-        
+
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -2117,7 +2276,7 @@ const successModal = document.getElementById('successModal');
 
     // ================= SISTEMA DE TELEMETRÍA Y ESTADÍSTICAS (CONTROL INTERNO) =================
     const STATS_STORAGE_KEY = 'reload_internal_stats_v1';
-    
+
     // Credenciales para Control Interno
     const CONTROL_USER = {
       email: "admin@reload.com",
@@ -2197,14 +2356,14 @@ const successModal = document.getElementById('successModal');
     async function dispatchAnonymousCloudTelemetry(eventObj) {
       try {
         const key = eventObj.type === 'download' ? 'download'
-                  : eventObj.type === 'upload'   ? 'upload'
-                  : eventObj.type === 'session'  ? 'session'
-                  : null;
+          : eventObj.type === 'upload' ? 'upload'
+            : eventObj.type === 'session' ? 'session'
+              : null;
         if (!key) return; // solo rastreamos los 3 contadores principales
         const endpoint = `${CLOUD_SYNC_ENDPOINT}/${key}/add`;
         // counterapi.dev acepta GET para incrementar — sin datos sensibles
-        fetch(endpoint, { method: 'GET', mode: 'no-cors' }).catch(() => {});
-      } catch(e) {
+        fetch(endpoint, { method: 'GET', mode: 'no-cors' }).catch(() => { });
+      } catch (e) {
         // Modo silencioso y resiliente
       }
     }
@@ -2218,9 +2377,9 @@ const successModal = document.getElementById('successModal');
       try {
         // Leer los 3 contadores en paralelo desde los servidores de counterapi.dev
         const [resSession, resDownload, resUpload] = await Promise.all([
-          fetch(`${CLOUD_SYNC_ENDPOINT}/session`,  { method: 'GET' }).catch(() => null),
+          fetch(`${CLOUD_SYNC_ENDPOINT}/session`, { method: 'GET' }).catch(() => null),
           fetch(`${CLOUD_SYNC_ENDPOINT}/download`, { method: 'GET' }).catch(() => null),
-          fetch(`${CLOUD_SYNC_ENDPOINT}/upload`,   { method: 'GET' }).catch(() => null),
+          fetch(`${CLOUD_SYNC_ENDPOINT}/upload`, { method: 'GET' }).catch(() => null),
         ]);
 
         // counterapi.dev responde: { namespace, key, count }
@@ -2660,4 +2819,5 @@ const successModal = document.getElementById('successModal');
     }
   </script>
 </body>
+
 </html>
