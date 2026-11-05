@@ -9,6 +9,7 @@ Generador interactivo de posters oficiales para el evento **RELOAD / ELAD 2026**
 - 🎨 **Filtros y Efectos Visuales Avanzados**:
   - **Composición de Imagen**: Media Imagen (*Half*), Línea Horizontal (*Eyes*) y Filtro Global (*Full*).
   - **Efectos de Color**: *RGB Glitch* (desfase cromático analógico calibrado) y *Terminal Ámbar* (con pistas de circuito interactivo).
+- 🔑 **Acceso Unificado sin Contraseña**: Pantalla de inicio para todos los roles (Participantes, Ponentes, Staff y Organizadores) donde solo colocan su correo para identificarse automáticamente.
 - 🖱️ **Canvas Interactivo**: Arrastra directamente la foto sobre el lienzo o usa los controles deslizantes para ajustar escala y posición (*X/Y*).
 - 📥 **Múltiples Formatos de Exportación**: Descarga en **PNG en Alta Definición** o **JPG optimizado (95%)**.
 - 🔒 **100% Privacidad Local**: Todo el procesamiento se ejecuta en el navegador del usuario utilizando la API de HTML5 Canvas 2D. Ninguna imagen o dato personal es subido a servidores externos.
