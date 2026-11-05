@@ -320,10 +320,10 @@
             class="text-orangeCircuit hover:text-orangeCircuit-soft text-[10px] sm:text-[11px] font-semibold border border-orangeCircuit/20 bg-orangeCircuit/5 px-2 sm:px-2.5 py-1.5 rounded-lg transition-colors whitespace-nowrap flex items-center gap-1">
             <span>Ingresar Correo</span> <span class="opacity-70 text-[10px]">🔑</span>
           </button>
-          <button id="btnOpenInternalControl" title="Acceso a Control Interno y Estadísticas"
-            class="text-gray-300 hover:text-white text-[10px] sm:text-[11px] font-semibold border border-orangeCircuit/30 hover:border-orangeCircuit bg-burgundy-dark/90 hover:bg-orangeCircuit/10 px-2 sm:px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap shadow-sm">
+          <button id="btnOpenInternalControl" title="Acceso al Panel Verificador de Estadísticas y Control"
+            class="hidden text-gray-300 hover:text-white text-[10px] sm:text-[11px] font-semibold border border-orangeCircuit/30 hover:border-orangeCircuit bg-burgundy-dark/90 hover:bg-orangeCircuit/10 px-2 sm:px-2.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 whitespace-nowrap shadow-sm">
             <span class="text-xs">📊</span>
-            <span class="hidden xs:inline">Control Interno</span>
+            <span class="hidden xs:inline">Panel Verificador</span>
           </button>
         </div>
       </div>
@@ -715,9 +715,8 @@
             class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-orangeCircuit via-burgundy to-orangeCircuit-soft flex items-center justify-center shadow-lg shadow-orangeCircuit/20 mx-auto mb-3 text-2xl">
             📊
           </div>
-          <h2 class="text-2xl font-bold font-tech text-cream tracking-tight">CONTROL INTERNO</h2>
-          <p class="text-xs text-gray-400 mt-1.5">Inicia sesión con correo y contraseña autorizados para consultar el
-            panel de estadísticas y uso en tiempo real.</p>
+          <h2 class="text-2xl font-bold font-tech text-cream tracking-tight">PANEL VERIFICADOR</h2>
+          <p class="text-xs text-gray-400 mt-1.5">Acceso exclusivo para organizador@reload.com. Consulta estadísticas y actividad en tiempo real.</p>
         </div>
 
         <form id="controlLoginForm" class="space-y-4" onsubmit="return false;">
@@ -772,7 +771,7 @@
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <h2 class="text-xl sm:text-2xl font-bold font-tech text-cream tracking-tight">CONTROL INTERNO •
+                <h2 class="text-xl sm:text-2xl font-bold font-tech text-cream tracking-tight">PANEL VERIFICADOR •
                   ESTADÍSTICAS</h2>
                 <span
                   class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
@@ -1338,12 +1337,20 @@
         lockedOpt.remove();
       }
 
-      if (!roleInput.querySelector('option[value="ORGANIZADOR"]')) {
-        const optOrg = document.createElement("option");
-        optOrg.value = "ORGANIZADOR";
-        optOrg.textContent = "ORGANIZADOR";
-        roleInput.appendChild(optOrg);
+      // Si es el Organizador (organizador@reload.com), desbloquear opción de Organizador
+      if (currentSession.verifiedEmail === 'organizador@reload.com' || selectedRole === "ORGANIZADOR") {
+        if (!roleInput.querySelector('option[value="ORGANIZADOR"]')) {
+          const optOrg = document.createElement("option");
+          optOrg.value = "ORGANIZADOR";
+          optOrg.textContent = "ORGANIZADOR";
+          roleInput.appendChild(optOrg);
+        }
+      } else {
+        const optOrg = roleInput.querySelector('option[value="ORGANIZADOR"]');
+        if (optOrg) optOrg.remove();
       }
+
+      // Rol STAFF disponible para Staff u Organizador
       if (!roleInput.querySelector('option[value="STAFF"]')) {
         const optStaff = document.createElement("option");
         optStaff.value = "STAFF";
@@ -1359,17 +1366,17 @@
       if (optOrg) optOrg.remove();
       const optStaff = roleInput.querySelector('option[value="STAFF"]');
       if (optStaff) optStaff.remove();
-
-      if (!roleInput.querySelector('option[value="LOCKED"]')) {
-        const optLock = document.createElement("option");
-        optLock.value = "LOCKED";
-        optLock.textContent = "🔒 ORGANIZADOR / STAFF";
-        roleInput.appendChild(optLock);
-      }
+      const optLock = roleInput.querySelector('option[value="LOCKED"]');
+      if (optLock) optLock.remove();
 
       roleInput.value = "PARTICIPANTE";
       currentSession.role = "PARTICIPANTE";
       currentSession.isAdminVerified = false;
+
+      // Cerrar y ocultar el panel verificador inmediatamente si no es organizador
+      if (btnOpenInternalControl) btnOpenInternalControl.classList.add('hidden');
+      if (internalControlDashboardModal) internalControlDashboardModal.classList.add('hidden');
+      if (internalControlLoginModal) internalControlLoginModal.classList.add('hidden');
     }
 
     function openGateModal() {
@@ -1386,7 +1393,9 @@
     function updateAdminUI() {
       if (currentSession.isAdminVerified) {
         userBadgeEmail.textContent = currentSession.verifiedEmail;
-        userBadgeTier.textContent = "ORGANIZACIÓN / STAFF";
+        userBadgeTier.textContent = currentSession.verifiedEmail === 'organizador@reload.com' 
+          ? "ORGANIZADOR OFICIAL" 
+          : "ORGANIZACIÓN / STAFF";
         userBadgeTier.className = "text-[9px] text-emerald-400 font-bold uppercase tracking-wider";
         btnChangeAccount.innerHTML = `<span>Cambiar Cuenta</span> <span class="opacity-70 text-[10px]">🔄</span>`;
         btnChangeAccount.className = "text-emerald-400 hover:text-emerald-300 text-[10px] sm:text-[11px] font-semibold border border-emerald-500/20 bg-emerald-500/5 px-2 sm:px-2.5 py-1.5 rounded-lg transition-colors whitespace-nowrap flex items-center gap-1";
@@ -1402,6 +1411,18 @@
         userBadgeTier.className = "text-[9px] text-gray-400 font-bold uppercase tracking-wider";
         btnChangeAccount.innerHTML = `<span>Ingresar Correo</span> <span class="opacity-70 text-[10px]">🔑</span>`;
         btnChangeAccount.className = "text-orangeCircuit hover:text-orangeCircuit-soft text-[10px] sm:text-[11px] font-semibold border border-orangeCircuit/20 bg-orangeCircuit/5 px-2 sm:px-2.5 py-1.5 rounded-lg transition-colors whitespace-nowrap flex items-center gap-1";
+      }
+
+      // Restricción: El Panel Verificador solo es visible y accesible para organizador@reload.com
+      const isOrganizer = (currentSession.verifiedEmail || "").trim().toLowerCase() === 'organizador@reload.com';
+      if (btnOpenInternalControl) {
+        if (isOrganizer) {
+          btnOpenInternalControl.classList.remove('hidden');
+        } else {
+          btnOpenInternalControl.classList.add('hidden');
+          if (internalControlDashboardModal) internalControlDashboardModal.classList.add('hidden');
+          if (internalControlLoginModal) internalControlLoginModal.classList.add('hidden');
+        }
       }
     }
 
@@ -1604,12 +1625,17 @@
       const val = e.target.value;
       if (val === "LOCKED") {
         roleInput.value = currentSession.role;
-        openGateModal();
+        openHomeLanding();
+      } else if (val === "ORGANIZADOR" && currentSession.verifiedEmail !== 'organizador@reload.com') {
+        console.warn("Intento de bypass detectado: Rol de Organizador exclusivo para organizador@reload.com");
+        roleInput.value = currentSession.role || "PARTICIPANTE";
+        currentSession.role = roleInput.value;
+        render();
       } else if ((val === "ORGANIZADOR" || val === "STAFF") && !currentSession.isAdminVerified) {
         console.warn("Intento de bypass detectado: Rol administrativo no verificado.");
         roleInput.value = "PARTICIPANTE";
         currentSession.role = "PARTICIPANTE";
-        openGateModal();
+        openHomeLanding();
         render();
       } else {
         currentSession.role = val;
@@ -2344,6 +2370,11 @@
       const roleText = (roleInput.value || currentSession.role || defaultData.role).toUpperCase();
 
       // Protección activa de renderizado contra bypass en DevTools
+      if (roleText === "ORGANIZADOR" && (currentSession.verifiedEmail || "").trim().toLowerCase() !== 'organizador@reload.com') {
+        ctx.restore();
+        setTimeout(lockAdminRoles, 0);
+        return;
+      }
       if ((roleText === "ORGANIZADOR" || roleText === "STAFF") && !currentSession.isAdminVerified) {
         ctx.restore();
         setTimeout(lockAdminRoles, 0); // Ejecución diferida para evitar bucles recurrentes de render
@@ -2541,7 +2572,7 @@
 
     // Credenciales para Control Interno
     const CONTROL_USER = {
-      email: "admin@reload.com",
+      email: "organizador@reload.com",
       plainPass: "Reload2026*"
     };
 
@@ -2803,6 +2834,14 @@
     const activityLogContainer = document.getElementById('activityLogContainer');
 
     function renderStatsDashboard() {
+      // Acceso restringido exclusivamente a organizador@reload.com
+      const isOrganizer = (currentSession.verifiedEmail || "").trim().toLowerCase() === 'organizador@reload.com';
+      if (!isOrganizer) {
+        if (internalControlDashboardModal) internalControlDashboardModal.classList.add('hidden');
+        if (internalControlLoginModal) internalControlLoginModal.classList.add('hidden');
+        return;
+      }
+
       const data = statsData;
 
       // KPIs
@@ -2926,18 +2965,20 @@
       });
     }
 
-    // Open Control Login or Dashboard
+    // Acceso al Panel Verificador / Control Interno (Exclusivo para organizador@reload.com)
     if (btnOpenInternalControl) {
       btnOpenInternalControl.addEventListener('click', () => {
-        if (isControlAuthenticated) {
-          syncCloudStats();
-          internalControlDashboardModal.classList.remove('hidden');
-        } else {
-          controlEmailInput.value = "";
-          controlPasswordInput.value = "";
-          controlLoginError.classList.add('hidden');
-          internalControlLoginModal.classList.remove('hidden');
+        const isOrganizer = (currentSession.verifiedEmail || "").trim().toLowerCase() === 'organizador@reload.com';
+        if (!isOrganizer) {
+          console.warn("Acceso denegado: Panel Verificador exclusivo para organizador@reload.com");
+          btnOpenInternalControl.classList.add('hidden');
+          return;
         }
+
+        // Acceso directo verificado para organizador@reload.com
+        isControlAuthenticated = true;
+        syncCloudStats();
+        internalControlDashboardModal.classList.remove('hidden');
       });
     }
 
@@ -2953,10 +2994,11 @@
       const email = (controlEmailInput.value || "").trim().toLowerCase();
       const password = (controlPasswordInput.value || "").trim();
 
-      const isValidEmail = email === CONTROL_USER.email || email === "admin@elad.com" || email === "control@reload.com";
-      const isValidPass = password === CONTROL_USER.plainPass || password === "Admin2026!";
+      const isCurrentOrganizer = (currentSession.verifiedEmail || "").trim().toLowerCase() === "organizador@reload.com";
+      const isValidEmail = email === "organizador@reload.com";
+      const isValidPass = password === CONTROL_USER.plainPass || password === "Admin2026!" || password === "Reload2026*";
 
-      if (isValidEmail && isValidPass) {
+      if (isCurrentOrganizer && isValidEmail && isValidPass) {
         isControlAuthenticated = true;
         controlLoginError.classList.add('hidden');
         internalControlLoginModal.classList.add('hidden');
@@ -2964,7 +3006,7 @@
         syncCloudStats();
         internalControlDashboardModal.classList.remove('hidden');
       } else {
-        controlLoginError.textContent = "Credenciales incorrectas. Verifica el correo y la contraseña.";
+        controlLoginError.textContent = "Acceso denegado. Exclusivo para organizador@reload.com.";
         controlLoginError.classList.remove('hidden');
         if (controlLoginForm) {
           controlLoginForm.classList.add('animate-shake');
