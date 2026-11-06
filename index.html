@@ -492,7 +492,7 @@
                   <span>Desplazar X</span>
                   <span id="offsetXVal">0px</span>
                 </div>
-                <input type="range" id="offsetXSlider" min="-500" max="500" step="1" value="0"
+                <input type="range" id="offsetXSlider" min="-600" max="600" step="1" value="0"
                   class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
               </div>
               <div>
@@ -500,7 +500,7 @@
                   <span>Desplazar Y</span>
                   <span id="offsetYVal">0px</span>
                 </div>
-                <input type="range" id="offsetYSlider" min="-500" max="500" step="1" value="0"
+                <input type="range" id="offsetYSlider" min="-900" max="900" step="1" value="0"
                   class="w-full accent-orangeCircuit bg-burgundy-deep rounded-lg h-1.5 cursor-pointer">
               </div>
             </div>
@@ -536,13 +536,14 @@
               </button>
               <span
                 class="text-[11px] sm:text-xs px-2 py-0.5 sm:py-1 rounded bg-burgundy-deep border border-burgundy-light/60 text-gray-400 font-mono hidden sm:inline-block">1080
-                × 1080 px</span>
+                × 1920 px (9:16)</span>
             </div>
           </div>
 
-          <!-- Canvas Wrapper con relación de aspecto cuadrada perfecta y receptor de Drag & Drop -->
+          <!-- Canvas Wrapper con relación de aspecto vertical 9:16 y receptor de Drag & Drop -->
           <div id="canvasWrapper"
-            class="relative w-full max-w-[480px] aspect-square rounded-xl overflow-hidden border-2 border-dashed border-burgundy-light/80 hover:border-orangeCircuit/80 bg-burgundy-deep shadow-inner cursor-grab active:cursor-grabbing group transition-all">
+            style="aspect-ratio: 9 / 16; max-height: 65vh;"
+            class="relative w-auto max-w-[360px] sm:max-w-[400px] aspect-[9/16] max-h-[65vh] rounded-xl overflow-hidden border-2 border-dashed border-burgundy-light/80 hover:border-orangeCircuit/80 bg-burgundy-deep shadow-inner cursor-grab active:cursor-grabbing group transition-all mx-auto">
             <canvas id="posterCanvas" class="w-full h-full block touch-none"></canvas>
 
             <!-- Mensaje flotante cuando no hay imagen cargada (Tocar o arrastrar para subir) -->
@@ -1129,9 +1130,9 @@
     const successModal = document.getElementById('successModal');
     const btnCloseModal = document.getElementById('btnCloseModal');
 
-    // Dimensiones internas del Canvas (Optimizadas para exportación HD)
+    // Dimensiones internas del Canvas (Optimizadas para exportación Vertical 9:16)
     const CANVAS_WIDTH = 1080;
-    const CANVAS_HEIGHT = 1080;
+    const CANVAS_HEIGHT = 1920;
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;
 
@@ -2120,8 +2121,8 @@
 
     function drawFullCyberFilter() {
       const grad = ctx.createRadialGradient(
-        CANVAS_WIDTH * 0.7, CANVAS_HEIGHT * 0.3, 100,
-        CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.5, CANVAS_WIDTH * 0.8
+        CANVAS_WIDTH * 0.7, CANVAS_HEIGHT * 0.35, 100,
+        CANVAS_WIDTH * 0.5, CANVAS_HEIGHT * 0.5, CANVAS_HEIGHT * 0.65
       );
       grad.addColorStop(0, 'rgba(255, 138, 101, 0.28)');
       grad.addColorStop(0.5, 'rgba(74, 14, 26, 0.385)');
@@ -2457,17 +2458,29 @@
     function drawEventGridAndFrame() {
       ctx.save();
 
-      const margin = 35;
-      const length = 25;
-      ctx.strokeStyle = 'rgba(255, 102, 0, 0.25)'; // Naranja Circuito sutil
-      ctx.lineWidth = 2;
+      const margin = 40;
+      const length = 32;
+      ctx.strokeStyle = 'rgba(255, 102, 0, 0.3)'; // Naranja Circuito sutil
+      ctx.lineWidth = 2.5;
 
-      // Esquinas de calibración de cámara
+      // Esquinas de calibración de cámara (4 esquinas exactas en el marco 1080x1920)
       ctx.beginPath();
-      ctx.moveTo(margin + length, margin); ctx.lineTo(margin, margin); ctx.lineTo(margin, margin + length);
-      ctx.moveTo(CANVAS_WIDTH - margin - length, margin); ctx.lineTo(CANVAS_WIDTH - margin, margin); ctx.lineTo(CANVAS_WIDTH - margin, margin + length);
-      ctx.moveTo(margin + length, CANVAS_HEIGHT - margin); ctx.lineTo(margin, CANVAS_HEIGHT - margin); ctx.lineTo(margin, CANVAS_HEIGHT - margin + length);
-      ctx.moveTo(CANVAS_WIDTH - margin - length, CANVAS_HEIGHT - margin); ctx.lineTo(margin, CANVAS_HEIGHT - margin); ctx.lineTo(margin, CANVAS_HEIGHT - margin + length);
+      // Superior Izquierda
+      ctx.moveTo(margin + length, margin);
+      ctx.lineTo(margin, margin);
+      ctx.lineTo(margin, margin + length);
+      // Superior Derecha
+      ctx.moveTo(CANVAS_WIDTH - margin - length, margin);
+      ctx.lineTo(CANVAS_WIDTH - margin, margin);
+      ctx.lineTo(CANVAS_WIDTH - margin, margin + length);
+      // Inferior Izquierda
+      ctx.moveTo(margin, CANVAS_HEIGHT - margin - length);
+      ctx.lineTo(margin, CANVAS_HEIGHT - margin);
+      ctx.lineTo(margin + length, CANVAS_HEIGHT - margin);
+      // Inferior Derecha
+      ctx.moveTo(CANVAS_WIDTH - margin - length, CANVAS_HEIGHT - margin);
+      ctx.lineTo(CANVAS_WIDTH - margin, CANVAS_HEIGHT - margin);
+      ctx.lineTo(CANVAS_WIDTH - margin, CANVAS_HEIGHT - margin - length);
       ctx.stroke();
 
       // Trama técnica de puntos (Naranja Suave)
@@ -2500,72 +2513,118 @@
         return;
       }
 
-      // ================= CAPA DE PROTECCIÓN DE TEXTO (Siempre Borgoña) =================
-      const textProtectGrad = ctx.createLinearGradient(0, 0, CANVAS_WIDTH * 0.65, 0);
-      textProtectGrad.addColorStop(0, 'rgba(31, 4, 9, 0.88)');
-      textProtectGrad.addColorStop(0.5, 'rgba(74, 14, 26, 0.45)');
-      textProtectGrad.addColorStop(1, 'rgba(74, 14, 26, 0)');
+      // ================= CAPAS DE PROTECCIÓN DE TEXTO (Formato Vertical 9:16) =================
+      // 1. Degradado superior para zona de encabezado y datos del evento
+      const topProtectGrad = ctx.createLinearGradient(0, 0, 0, 560);
+      topProtectGrad.addColorStop(0, 'rgba(20, 2, 6, 0.94)');
+      topProtectGrad.addColorStop(0.65, 'rgba(43, 7, 13, 0.70)');
+      topProtectGrad.addColorStop(1, 'rgba(43, 7, 13, 0)');
+      ctx.fillStyle = topProtectGrad;
+      ctx.fillRect(0, 0, CANVAS_WIDTH, 560);
 
-      ctx.fillStyle = textProtectGrad;
-      ctx.fillRect(0, 0, CANVAS_WIDTH * 0.7, CANVAS_HEIGHT);
+      // Sombra lateral izquierda sutil en encabezado
+      const leftProtectGrad = ctx.createLinearGradient(0, 0, CANVAS_WIDTH * 0.75, 0);
+      leftProtectGrad.addColorStop(0, 'rgba(25, 3, 7, 0.75)');
+      leftProtectGrad.addColorStop(0.6, 'rgba(43, 7, 13, 0.35)');
+      leftProtectGrad.addColorStop(1, 'rgba(43, 7, 13, 0)');
+      ctx.fillStyle = leftProtectGrad;
+      ctx.fillRect(0, 0, CANVAS_WIDTH * 0.75, 560);
 
-      const bottomProtectGrad = ctx.createLinearGradient(0, CANVAS_HEIGHT, 0, CANVAS_HEIGHT * 0.65);
-      bottomProtectGrad.addColorStop(0, 'rgba(31, 4, 9, 0.9)');
-      bottomProtectGrad.addColorStop(1, 'rgba(74, 14, 26, 0)');
+      // 2. Degradado inferior para proteger el thumbnail, nombre del participante y redes
+      const bottomProtectGrad = ctx.createLinearGradient(0, CANVAS_HEIGHT - 650, 0, CANVAS_HEIGHT);
+      bottomProtectGrad.addColorStop(0, 'rgba(20, 2, 6, 0)');
+      bottomProtectGrad.addColorStop(0.35, 'rgba(31, 4, 9, 0.82)');
+      bottomProtectGrad.addColorStop(0.75, 'rgba(20, 2, 6, 0.95)');
+      bottomProtectGrad.addColorStop(1, 'rgba(15, 1, 4, 0.98)');
       ctx.fillStyle = bottomProtectGrad;
-      ctx.fillRect(0, CANVAS_HEIGHT * 0.6, CANVAS_WIDTH * 0.7, CANVAS_HEIGHT * 0.4);
+      ctx.fillRect(0, CANVAS_HEIGHT - 650, CANVAS_WIDTH, 650);
 
 
-      // 1. TÍTULO DE CAMPAÑA: #ELAD26 e Identidad
+      // ================= 1. ENCABEZADO SUPERIOR: LOGO Y BADGE DE ROL =================
+      const headerY = 88;
+      // Logotipo RELOAD en esquina superior izquierda
+      if (faviconLogo && faviconLogo.complete && faviconLogo.naturalWidth > 0) {
+        ctx.drawImage(faviconLogo, 75, headerY, 68, 68);
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 26px "Montserrat", sans-serif';
+        ctx.fillText("RELOAD", 155, headerY + 22);
+
+        ctx.fillStyle = '#FF8A65';
+        ctx.font = '600 11px "Montserrat", sans-serif';
+        ctx.fillText("ANTROPOLOGÍA DIGITAL", 155, headerY + 44);
+      }
+
+      // Badge de Rol en esquina superior derecha
+      const badgeW = 260;
+      const badgeH = 58;
+      const badgeX = CANVAS_WIDTH - 75 - badgeW;
+      const badgeY = headerY + 5;
+
+      ctx.fillStyle = '#FF6600'; // Naranja Circuito
+      ctx.fillRect(badgeX, badgeY, badgeW, badgeH);
+
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 44px "Montserrat", sans-serif';
-      ctx.fillText("#ELAD26", 100, 345);
-
-      ctx.fillStyle = '#FFFFFF'; // Blanco como #ELAD26
       ctx.font = 'bold 20px "Montserrat", sans-serif';
-      ctx.fillText("VI ENCUENTRO LATINOAMERICANO", 100, 395);
-      ctx.fillText("DE ANTROPOLOGÍA DIGITAL", 100, 425);
-
-      // Subtextos estéticos del evento
-      ctx.fillStyle = '#FDF3C7'; // Crema — texto temático
-      ctx.font = '500 28px "Roboto", sans-serif';
-      ctx.fillText("¿Habitar lo híbrido?", 100, 468);
-
-      ctx.fillStyle = '#FF8A65'; // Naranja Suave — fecha
-      ctx.font = '500 28px "Roboto", sans-serif';
-      ctx.fillText("Diciembre 1, 2 y 3 , 2026", 100, 508);
-      ctx.font = '500 19px "Roboto", sans-serif';
-      ctx.fillText("Miembro Oficial", 100, 540);
-
-      // Línea vertical izquierda de acento de #ELAD26
-      ctx.strokeStyle = '#FF6600'; // Naranja Circuito
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(75, 310);
-      ctx.lineTo(75, 550);
-      ctx.stroke();
-
-
-
-      // Badge de Rol en la esquina derecha superior (Fondo Naranja Circuito, 40% más grande)
-      ctx.fillStyle = '#FF6600';
-      ctx.fillRect(728, 112, 252, 56);
-
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 21px "Montserrat", sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(roleText, 854, 140);
+      ctx.fillText(roleText, badgeX + badgeW / 2, badgeY + badgeH / 2);
 
-      // 3. Mini Recuadro Thumbnail en la parte inferior izquierda (Con borde Naranja)
-      const thumbX = 100;
-      const thumbY = 670;
-      const thumbSize = 100;
 
+      // ================= 2. IDENTIDAD Y DETALLES DEL EVENTO (#ELAD26) =================
+      const eventBlockX = 100;
+      const eventStartLineY = 200;
+      const eventEndLineY = 460;
+
+      // Línea vertical izquierda de acento (#FF6600)
+      ctx.strokeStyle = '#FF6600';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(75, eventStartLineY);
+      ctx.lineTo(75, eventEndLineY);
+      ctx.stroke();
+
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+
+      // #ELAD26
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 52px "Montserrat", sans-serif';
+      ctx.fillText("#ELAD26", eventBlockX, 252);
+
+      // Encuentro Latinoamericano
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 21px "Montserrat", sans-serif';
+      ctx.fillText("VI ENCUENTRO LATINOAMERICANO", eventBlockX, 298);
+      ctx.fillText("DE ANTROPOLOGÍA DIGITAL", eventBlockX, 328);
+
+      // Subtexto temático
+      ctx.fillStyle = '#FDF3C7'; // Crema
+      ctx.font = '500 28px "Roboto", sans-serif';
+      ctx.fillText("¿Habitar lo híbrido?", eventBlockX, 375);
+
+      // Fecha del evento (Requisito explícito: 1 al 3 de diciembre de 2026)
+      ctx.fillStyle = '#FF8A65'; // Naranja Suave
+      ctx.font = '600 25px "Roboto", sans-serif';
+      ctx.fillText("1 al 3 de diciembre de 2026", eventBlockX, 415);
+
+      // Acreditación oficial
+      ctx.fillStyle = 'rgba(253, 243, 199, 0.82)';
+      ctx.font = '500 18px "Roboto", sans-serif';
+      ctx.fillText("Miembro Oficial • Modalidad Híbrida", eventBlockX, 450);
+
+
+      // ================= 3. BLOQUE INFERIOR DEL PARTICIPANTE =================
+      const thumbX = 75;
+      const thumbY = 1430;
+      const thumbSize = 130;
+
+      // Marco del Mini Recuadro Thumbnail (Con borde Naranja)
       ctx.fillStyle = 'rgba(255, 102, 0, 0.2)';
       ctx.fillRect(thumbX - 6, thumbY - 6, thumbSize + 12, thumbSize + 12);
       ctx.strokeStyle = '#FF6600';
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 2.5;
       ctx.strokeRect(thumbX - 6, thumbY - 6, thumbSize + 12, thumbSize + 12);
 
       if (userImage) {
@@ -2574,35 +2633,69 @@
         ctx.fillStyle = '#2B070D'; // Borgoña oscuro
         ctx.fillRect(thumbX, thumbY, thumbSize, thumbSize);
         if (faviconLogo && faviconLogo.complete && faviconLogo.naturalWidth > 0) {
-          ctx.drawImage(faviconLogo, thumbX + 8, thumbY + 8, thumbSize - 16, thumbSize - 16);
+          ctx.drawImage(faviconLogo, thumbX + 12, thumbY + 12, thumbSize - 24, thumbSize - 24);
         } else {
           ctx.fillStyle = '#FF6600';
-          ctx.font = 'bold 36px "Montserrat", sans-serif';
-          ctx.fillText("RE", thumbX + 50, thumbY + 55);
+          ctx.font = 'bold 42px "Montserrat", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText("RE", thumbX + thumbSize / 2, thumbY + thumbSize / 2);
         }
       }
 
-      // 4. Nombre del participante
+      // Detalle al costado del thumbnail
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
+
+      ctx.fillStyle = '#FF8A65';
+      ctx.font = 'bold 13px "Montserrat", sans-serif';
+      ctx.fillText("CREDENCIAL DIGITAL OFICIAL", 230, 1472);
+
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 54px "Montserrat", sans-serif';
+      ctx.font = 'bold 22px "Montserrat", sans-serif';
+      ctx.fillText(roleText, 230, 1512);
+
+      ctx.fillStyle = 'rgba(253, 243, 199, 0.72)';
+      ctx.font = '500 15px "Roboto", monospace';
+      ctx.fillText("#ELAD26-ID // VERIFIED", 230, 1542);
+
+      // Nombre del participante
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = 'bold 56px "Montserrat", sans-serif';
 
       const words = nameText.split(' ');
+      let nextTextY = 1640;
       if (words.length > 2) {
         const firstLine = words.slice(0, 2).join(' ');
         const secondLine = words.slice(2).join(' ');
-        ctx.fillText(firstLine, 100, 840);
-        ctx.fillText(secondLine, 100, 905);
+        ctx.fillText(firstLine, 75, 1630);
+        ctx.fillText(secondLine, 75, 1695);
+        nextTextY = 1755;
       } else {
-        ctx.fillText(nameText, 100, 840);
+        ctx.fillText(nameText, 75, 1640);
+        nextTextY = 1705;
       }
 
-      // Handle de Redes (Estilo naranja suave)
+      // Handle de Redes Sociales (@usuario)
       ctx.fillStyle = '#FF8A65';
-      ctx.font = '600 24px "Roboto", sans-serif';
+      ctx.font = '600 28px "Roboto", sans-serif';
       const handleWithAt = handleText.startsWith('@') ? handleText : '@' + handleText;
-      ctx.fillText(handleWithAt, 100, 955);
+      ctx.fillText(handleWithAt, 75, nextTextY);
+
+      // Línea divisoria y pie de póster
+      ctx.strokeStyle = 'rgba(255, 102, 0, 0.35)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(75, 1810);
+      ctx.lineTo(CANVAS_WIDTH - 75, 1810);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(253, 243, 199, 0.65)';
+      ctx.font = '500 15px "Montserrat", monospace';
+      ctx.fillText("#ELAD26 • RED LATINOAMERICANA DE ANTROPOLOGÍA DIGITAL", 75, 1845);
+
+      ctx.textAlign = 'right';
+      ctx.fillText("reload.lat", CANVAS_WIDTH - 75, 1845);
 
       ctx.restore();
     }
