@@ -2616,30 +2616,60 @@
 
 
       // ================= 3. BLOQUE INFERIOR DEL PARTICIPANTE =================
+      // Mini Recuadro Thumbnail en estricta proporción 9:16 (sin distorsión)
       const thumbX = 75;
-      const thumbY = 1430;
-      const thumbSize = 130;
+      const thumbY = 1410;
+      const thumbW = 99;
+      const thumbH = 176; // 99 × (16 / 9) = 176 (proporción 9:16 exacta)
 
       // Marco del Mini Recuadro Thumbnail (Con borde Naranja)
       ctx.fillStyle = 'rgba(255, 102, 0, 0.2)';
-      ctx.fillRect(thumbX - 6, thumbY - 6, thumbSize + 12, thumbSize + 12);
+      ctx.fillRect(thumbX - 6, thumbY - 6, thumbW + 12, thumbH + 12);
       ctx.strokeStyle = '#FF6600';
       ctx.lineWidth = 2.5;
-      ctx.strokeRect(thumbX - 6, thumbY - 6, thumbSize + 12, thumbSize + 12);
+      ctx.strokeRect(thumbX - 6, thumbY - 6, thumbW + 12, thumbH + 12);
 
       if (userImage) {
-        ctx.drawImage(userImage, thumbX, thumbY, thumbSize, thumbSize);
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(thumbX, thumbY, thumbW, thumbH);
+        ctx.clip();
+
+        // Renderizado con relación de aspecto preservada (object-fit: cover) sin distorsión
+        const imgAspect = userImage.width / userImage.height;
+        const thumbAspect = thumbW / thumbH; // 9 / 16
+
+        let drawW, drawH, drawX, drawY;
+        if (imgAspect > thumbAspect) {
+          // La imagen es proporcionalmente más ancha que 9:16
+          drawH = thumbH;
+          drawW = thumbH * imgAspect;
+          drawX = thumbX - (drawW - thumbW) / 2;
+          drawY = thumbY;
+        } else {
+          // La imagen es 9:16 exacta o más vertical
+          drawW = thumbW;
+          drawH = thumbW / imgAspect;
+          drawX = thumbX;
+          drawY = thumbY - (drawH - thumbH) / 2;
+        }
+
+        ctx.drawImage(userImage, drawX, drawY, drawW, drawH);
+        ctx.restore();
       } else {
         ctx.fillStyle = '#2B070D'; // Borgoña oscuro
-        ctx.fillRect(thumbX, thumbY, thumbSize, thumbSize);
+        ctx.fillRect(thumbX, thumbY, thumbW, thumbH);
         if (faviconLogo && faviconLogo.complete && faviconLogo.naturalWidth > 0) {
-          ctx.drawImage(faviconLogo, thumbX + 12, thumbY + 12, thumbSize - 24, thumbSize - 24);
+          const logoAspect = faviconLogo.naturalWidth / faviconLogo.naturalHeight;
+          const logoW = thumbW - 24;
+          const logoH = logoW / logoAspect;
+          ctx.drawImage(faviconLogo, thumbX + 12, thumbY + (thumbH - logoH) / 2, logoW, logoH);
         } else {
           ctx.fillStyle = '#FF6600';
-          ctx.font = 'bold 42px "Montserrat", sans-serif';
+          ctx.font = 'bold 36px "Montserrat", sans-serif';
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.fillText("RE", thumbX + thumbSize / 2, thumbY + thumbSize / 2);
+          ctx.fillText("RE", thumbX + thumbW / 2, thumbY + thumbH / 2);
         }
       }
 
@@ -2647,17 +2677,22 @@
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
 
+      const detailX = thumbX + thumbW + 28;
       ctx.fillStyle = '#FF8A65';
       ctx.font = 'bold 13px "Montserrat", sans-serif';
-      ctx.fillText("CREDENCIAL DIGITAL OFICIAL", 230, 1472);
+      ctx.fillText("CREDENCIAL DIGITAL OFICIAL", detailX, 1450);
 
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 22px "Montserrat", sans-serif';
-      ctx.fillText(roleText, 230, 1512);
+      ctx.font = 'bold 24px "Montserrat", sans-serif';
+      ctx.fillText(roleText, detailX, 1490);
 
       ctx.fillStyle = 'rgba(253, 243, 199, 0.72)';
       ctx.font = '500 15px "Roboto", monospace';
-      ctx.fillText("#ELAD26-ID // VERIFIED", 230, 1542);
+      ctx.fillText("#ELAD26-ID // VERIFIED", detailX, 1526);
+
+      ctx.fillStyle = 'rgba(255, 102, 0, 0.85)';
+      ctx.font = '600 12px "Roboto", monospace';
+      ctx.fillText("FORMATO VERTICAL 9:16", detailX, 1558);
 
       // Nombre del participante
       ctx.fillStyle = '#FFFFFF';
@@ -2668,12 +2703,12 @@
       if (words.length > 2) {
         const firstLine = words.slice(0, 2).join(' ');
         const secondLine = words.slice(2).join(' ');
-        ctx.fillText(firstLine, 75, 1630);
-        ctx.fillText(secondLine, 75, 1695);
-        nextTextY = 1755;
+        ctx.fillText(firstLine, 75, 1635);
+        ctx.fillText(secondLine, 75, 1700);
+        nextTextY = 1760;
       } else {
-        ctx.fillText(nameText, 75, 1640);
-        nextTextY = 1705;
+        ctx.fillText(nameText, 75, 1645);
+        nextTextY = 1710;
       }
 
       // Handle de Redes Sociales (@usuario)
