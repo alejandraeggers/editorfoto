@@ -137,8 +137,11 @@
     <div
       class="max-w-md w-full bg-burgundy-dark border border-burgundy-light rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden my-auto">
       <!-- Decoración de fondo de consola cyber luminosa -->
-      <div class="absolute -right-16 -top-16 w-40 h-40 bg-orangeCircuit/15 rounded-full blur-2xl pointer-events-none"></div>
-      <div class="absolute -left-16 -bottom-16 w-40 h-40 bg-burgundy-light/30 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -right-16 -top-16 w-40 h-40 bg-orangeCircuit/15 rounded-full blur-2xl pointer-events-none">
+      </div>
+      <div
+        class="absolute -left-16 -bottom-16 w-40 h-40 bg-burgundy-light/30 rounded-full blur-2xl pointer-events-none">
+      </div>
 
       <!-- Botón para cerrar modal de inicio -->
       <button id="btnCloseHomeLanding"
@@ -201,8 +204,7 @@
             Correo Electrónico
           </label>
           <div class="relative">
-            <input type="email" id="homeEmail" autocomplete="email" required
-              placeholder="nombre@mail.com"
+            <input type="email" id="homeEmail" autocomplete="email" required placeholder="nombre@mail.com"
               class="w-full bg-burgundy-deep border border-burgundy-light/60 focus:border-orangeCircuit rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-orangeCircuit transition-all placeholder-gray-500">
           </div>
           <p class="text-[11px] text-gray-400 mt-1.5 font-normal">Ejemplo: nombre@mail.com</p>
@@ -214,7 +216,8 @@
         <button type="submit" id="btnHomeEnter"
           class="w-full bg-gradient-to-r from-orangeCircuit to-orangeCircuit-soft hover:from-orangeCircuit/90 hover:to-orangeCircuit-soft/90 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-lg shadow-orangeCircuit/20 flex items-center justify-center gap-2 text-sm group">
           <span>Ingresar al Generador</span>
-          <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
           </svg>
         </button>
@@ -714,7 +717,8 @@
             📊
           </div>
           <h2 class="text-2xl font-bold font-tech text-cream tracking-tight">PANEL VERIFICADOR</h2>
-          <p class="text-xs text-gray-400 mt-1.5">Acceso exclusivo para organizador@reload.com. Consulta estadísticas y actividad en tiempo real.</p>
+          <p class="text-xs text-gray-400 mt-1.5">Acceso exclusivo para organizador@reload.com. Consulta estadísticas y
+            actividad en tiempo real.</p>
         </div>
 
         <form id="controlLoginForm" class="space-y-4" onsubmit="return false;">
@@ -1067,9 +1071,9 @@
   <script>
     // ================= BASE DE DATOS DE HASHES ADMINISTRATIVOS (SHA-256) =================
     const adminDatabase = {
-      "1a839c29d73c5272ce7dcb60c22e51e41353d7c5e8d0385ba2d3be710904ab8e": { name: "SOFÍA MARTÍNEZ", handle: "@sofia_reload", defaultRole: "ORGANIZADOR" },
-      "11ddc372b51a465686f101da39d8e651b330ef7c76c4454baa62309e5003afd2": { name: "LUCAS CONTRERAS", handle: "@lucas_staff", defaultRole: "STAFF" },
-      "809cb2dd0c8f5615704976565777a8543ecbd01a3bb296efcbd2510e52a2b8f6": { name: "EQUIPO DIRECTIVO RAD", handle: "@redlatdigital", defaultRole: "ORGANIZADOR" }
+      "1a839c29d73c5272ce7dcb60c22e51e41353d7c5e8d0385ba2d3be710904ab8e": { name: "", handle: "", defaultRole: "ORGANIZADOR" },
+      "11ddc372b51a465686f101da39d8e651b330ef7c76c4454baa62309e5003afd2": { name: "", handle: "", defaultRole: "STAFF" },
+      "809cb2dd0c8f5615704976565777a8543ecbd01a3bb296efcbd2510e52a2b8f6": { name: "EQUIPO ELAD26", handle: "@redlatdigital", defaultRole: "ORGANIZADOR" }
     };
 
     // Referencias de Elementos de Acceso
@@ -1379,7 +1383,7 @@
       roleInput.value = "PARTICIPANTE";
       try {
         localStorage.removeItem('reload_user_email');
-      } catch (e) {}
+      } catch (e) { }
 
       updateAdminUI();
       closeHomeLanding();
@@ -1416,7 +1420,7 @@
 
         try {
           localStorage.setItem('reload_user_email', cleanEmail);
-        } catch (e) {}
+        } catch (e) { }
 
         // Desbloquear opciones de rol admin
         unlockAdminRoles(matchedAdmin.defaultRole);
@@ -1502,8 +1506,8 @@
     function updateAdminUI() {
       if (currentSession.isAdminVerified) {
         userBadgeEmail.textContent = currentSession.verifiedEmail;
-        userBadgeTier.textContent = currentSession.verifiedEmail === 'organizador@reload.com' 
-          ? "ORGANIZADOR OFICIAL" 
+        userBadgeTier.textContent = currentSession.verifiedEmail === 'organizador@reload.com'
+          ? "ORGANIZADOR OFICIAL"
           : "ORGANIZACIÓN / STAFF";
         userBadgeTier.className = "text-[9px] text-emerald-400 font-bold uppercase tracking-wider";
         btnChangeAccount.innerHTML = `<span>Cambiar Cuenta</span> <span class="opacity-70 text-[10px]">🔄</span>`;
