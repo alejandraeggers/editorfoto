@@ -195,7 +195,7 @@
       </div>
 
       <!-- Formulario de Check-In General -->
-      <form id="homeLoginForm" class="space-y-4" onsubmit="return false;">
+      <form id="homeLoginForm" class="space-y-4">
         <div>
           <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
             Correo Electrónico
@@ -1090,6 +1090,11 @@
     const btnCloseHomeLanding = document.getElementById('btnCloseHomeLanding');
     const homeErrorMessage = document.getElementById('homeErrorMessage');
 
+    // Referencias de elementos de Control Interno / Panel Verificador
+    const btnOpenInternalControl = document.getElementById('btnOpenInternalControl');
+    const internalControlLoginModal = document.getElementById('internalControlLoginModal');
+    const internalControlDashboardModal = document.getElementById('internalControlDashboardModal');
+
     // Referencias de la Cuenta en la App Principal
     const userBadgeEmail = document.getElementById('userBadgeEmail');
     const userBadgeTier = document.getElementById('userBadgeTier');
@@ -1188,12 +1193,113 @@
       return re.test(email);
     }
 
+    // Diccionario directo de hashes precalculados para cuentas administrativas
+    const adminKnownEmailHashes = {
+      "organizador@reload.com": "1a839c29d73c5272ce7dcb60c22e51e41353d7c5e8d0385ba2d3be710904ab8e",
+      "staff@reload.com": "11ddc372b51a465686f101da39d8e651b330ef7c76c4454baa62309e5003afd2",
+      "admin@redlatdigital.org": "809cb2dd0c8f5615704976565777a8543ecbd01a3bb296efcbd2510e52a2b8f6"
+    };
+
+    function sha256Fallback(ascii) {
+      function rightRotate(value, amount) {
+        return (value >>> amount) | (value << (32 - amount));
+      }
+      const mathPow = Math.pow;
+      const maxWord = mathPow(2, 32);
+      let lengthProperty = 'length';
+      let i, j;
+      let result = '';
+      const words = [];
+      const asciiBitLength = ascii[lengthProperty] * 8;
+      let hash = sha256Fallback.h = sha256Fallback.h || [];
+      const k = sha256Fallback.k = sha256Fallback.k || [];
+      let primeCounter = k[lengthProperty];
+
+      const isComposite = {};
+      for (let candidate = 2; primeCounter < 64; candidate++) {
+        if (!isComposite[candidate]) {
+          for (i = candidate * candidate; i < 312; i += candidate) {
+            isComposite[i] = true;
+          }
+          hash[primeCounter] = (mathPow(candidate, 0.5) * maxWord) | 0;
+          k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+        }
+      }
+
+      hash = hash.slice(0);
+      words[asciiBitLength >> 5] |= 0x80 << (24 - asciiBitLength % 32);
+      words[(((asciiBitLength + 64) >> 9) << 4) + 15] = asciiBitLength;
+
+      for (i = 0; i < ascii[lengthProperty]; i++) {
+        words[i >> 2] |= ascii.charCodeAt(i) << (24 - (i % 4) * 8);
+      }
+
+      const w = [];
+      for (i = 0; i < words[lengthProperty]; i += 16) {
+        const h0 = hash[0], h1 = hash[1], h2 = hash[2], h3 = hash[3];
+        const h4 = hash[4], h5 = hash[5], h6 = hash[6], h7 = hash[7];
+
+        for (j = 0; j < 64; j++) {
+          if (j < 16) {
+            w[j] = words[j + i] | 0;
+          } else {
+            const gamma0 = rightRotate(w[j - 15], 7) ^ rightRotate(w[j - 15], 18) ^ (w[j - 15] >>> 3);
+            const gamma1 = rightRotate(w[j - 2], 17) ^ rightRotate(w[j - 2], 19) ^ (w[j - 2] >>> 10);
+            w[j] = (w[j - 16] + gamma0 + w[j - 7] + gamma1) | 0;
+          }
+
+          const s1 = rightRotate(h4, 6) ^ rightRotate(h4, 11) ^ rightRotate(h4, 25);
+          const ch = (h4 & hash[5]) ^ (~h4 & hash[6]);
+          const temp1 = (hash[7] + s1 + ch + k[j] + w[j]) | 0;
+          const s0 = rightRotate(hash[0], 2) ^ rightRotate(hash[0], 13) ^ rightRotate(hash[0], 22);
+          const maj = (hash[0] & hash[1]) ^ (hash[0] & hash[2]) ^ (hash[1] & hash[2]);
+          const temp2 = (s0 + maj) | 0;
+
+          hash[7] = hash[6];
+          hash[6] = hash[5];
+          hash[5] = hash[4];
+          hash[4] = (hash[3] + temp1) | 0;
+          hash[3] = hash[2];
+          hash[2] = hash[1];
+          hash[1] = hash[0];
+          hash[0] = (temp1 + temp2) | 0;
+        }
+
+        hash[0] = (hash[0] + h0) | 0;
+        hash[1] = (hash[1] + h1) | 0;
+        hash[2] = (hash[2] + h2) | 0;
+        hash[3] = (hash[3] + h3) | 0;
+        hash[4] = (hash[4] + h4) | 0;
+        hash[5] = (hash[5] + h5) | 0;
+        hash[6] = (hash[6] + h6) | 0;
+        hash[7] = (hash[7] + h7) | 0;
+      }
+
+      for (i = 0; i < 8; i++) {
+        for (j = 3; j >= 0; j--) {
+          const b = (hash[i] >> (j * 8)) & 255;
+          result += ((b < 16) ? '0' : '') + b.toString(16);
+        }
+      }
+      return result;
+    }
+
     async function sha256(message) {
-      const msgBuffer = new TextEncoder().encode(message);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-      const hashArray = Array.from(new Uint8Array(hashBuffer));
-      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-      return hashHex;
+      const clean = (message || "").trim().toLowerCase();
+      if (adminKnownEmailHashes[clean]) {
+        return adminKnownEmailHashes[clean];
+      }
+      if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle && window.crypto.subtle.digest) {
+        try {
+          const msgBuffer = new TextEncoder().encode(clean);
+          const hashBuffer = await window.crypto.subtle.digest('SHA-256', msgBuffer);
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        } catch (e) {
+          console.warn("crypto.subtle error, fallback to pure JS:", e);
+        }
+      }
+      return sha256Fallback(clean);
     }
 
     // Login general para todos los roles (sin contraseña)
@@ -1455,24 +1561,30 @@
     btnCloseAccessGate.addEventListener('click', closeGateModal);
 
     // Eventos de la Página de Inicio (Landing para todos los roles)
+    let isLoggingIn = false;
+    async function submitHomeLogin(e) {
+      if (e && typeof e.preventDefault === 'function') e.preventDefault();
+      if (isLoggingIn) return;
+      isLoggingIn = true;
+      try {
+        await handleGeneralLogin(homeEmail ? homeEmail.value : "");
+      } finally {
+        isLoggingIn = false;
+      }
+    }
+
     if (btnHomeEnter) {
-      btnHomeEnter.addEventListener('click', () => {
-        handleGeneralLogin(homeEmail.value);
-      });
+      btnHomeEnter.addEventListener('click', submitHomeLogin);
     }
 
     if (homeLoginForm) {
-      homeLoginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        handleGeneralLogin(homeEmail.value);
-      });
+      homeLoginForm.addEventListener('submit', submitHomeLogin);
     }
 
     if (homeEmail) {
       homeEmail.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-          e.preventDefault();
-          handleGeneralLogin(homeEmail.value);
+          submitHomeLogin(e);
         }
       });
     }
@@ -2786,9 +2898,7 @@
     // Registrar sesión de usuario al cargar la página
     trackEvent('session', { detail: 'Apertura de la aplicación' });
 
-    // Referencias de elementos de Control Interno
-    const btnOpenInternalControl = document.getElementById('btnOpenInternalControl');
-    const internalControlLoginModal = document.getElementById('internalControlLoginModal');
+    // Referencias de elementos de Control Interno (panel y autenticación)
     const btnCloseControlLogin = document.getElementById('btnCloseControlLogin');
     const controlLoginForm = document.getElementById('controlLoginForm');
     const controlEmailInput = document.getElementById('controlEmailInput');
@@ -2797,7 +2907,6 @@
     const controlLoginError = document.getElementById('controlLoginError');
     const btnSubmitControlLogin = document.getElementById('btnSubmitControlLogin');
 
-    const internalControlDashboardModal = document.getElementById('internalControlDashboardModal');
     const btnCloseControlDashboard = document.getElementById('btnCloseControlDashboard');
     const btnLogoutControl = document.getElementById('btnLogoutControl');
     const btnExportStatsReport = document.getElementById('btnExportStatsReport');
