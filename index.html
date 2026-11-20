@@ -541,8 +541,7 @@
           </div>
 
           <!-- Canvas Wrapper con relación de aspecto vertical 9:16 y receptor de Drag & Drop -->
-          <div id="canvasWrapper"
-            style="aspect-ratio: 9 / 16; max-height: 65vh;"
+          <div id="canvasWrapper" style="aspect-ratio: 9 / 16; max-height: 65vh;"
             class="relative w-auto max-w-[360px] sm:max-w-[400px] aspect-[9/16] max-h-[65vh] rounded-xl overflow-hidden border-2 border-dashed border-burgundy-light/80 hover:border-orangeCircuit/80 bg-burgundy-deep shadow-inner cursor-grab active:cursor-grabbing group transition-all mx-auto">
             <canvas id="posterCanvas" class="w-full h-full block touch-none"></canvas>
 
@@ -1061,7 +1060,7 @@
       <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
         <p>© 2026 RELOAD. Todos los derechos reservados.</p>
         <p class="flex items-center gap-1.5">
-          Diseñado con el corazón para impulsar la representación en Tech 💻✨
+          Diseño y desarrollo por <a href="https://tuportafolio.com" target="_blank" rel="noopener">Tu Nombre</a>
         </p>
       </div>
     </footer>
@@ -1072,8 +1071,8 @@
   <script>
     // ================= BASE DE DATOS DE HASHES ADMINISTRATIVOS (SHA-256) =================
     const adminDatabase = {
-      "1a839c29d73c5272ce7dcb60c22e51e41353d7c5e8d0385ba2d3be710904ab8e": { name: "", handle: "", defaultRole: "ORGANIZADOR" },
-      "11ddc372b51a465686f101da39d8e651b330ef7c76c4454baa62309e5003afd2": { name: "", handle: "", defaultRole: "STAFF" },
+      "1a839c29d73c5272ce7dcb60c22e51e41353d7c5e8d0385ba2d3be710904ab8e": { name: "EQUIPO ELAD26", handle: "@redlatdigital", defaultRole: "ORGANIZADOR" },
+      "11ddc372b51a465686f101da39d8e651b330ef7c76c4454baa62309e5003afd2": { name: "EQUIPO ELAD26", handle: "@redlatdigital", defaultRole: "STAFF" },
       "809cb2dd0c8f5615704976565777a8543ecbd01a3bb296efcbd2510e52a2b8f6": { name: "EQUIPO ELAD26", handle: "@redlatdigital", defaultRole: "ORGANIZADOR" }
     };
 
@@ -1174,7 +1173,7 @@
 
     // Valores dinámicos por defecto
     const defaultData = {
-      name: "RED DE ANTROPOLOGÍA DIGITAL",
+      name: "RED LATINOAMERICANA DE ANTROPOLOGÍA DIGITAL",
       handle: "@redlatdigital",
       role: "PARTICIPANTE"
     };
@@ -1196,6 +1195,11 @@
     function validateEmailFormat(email) {
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
+    }
+
+    function isAuthorizedOrganizerEmail(email) {
+      const clean = (email || "").trim().toLowerCase();
+      return clean === 'organizador@reload.com' || clean === 'admin@redlatdigital.org';
     }
 
     // Diccionario directo de hashes precalculados para cuentas administrativas
@@ -1451,8 +1455,8 @@
         lockedOpt.remove();
       }
 
-      // Si es el Organizador (organizador@reload.com), desbloquear opción de Organizador
-      if (currentSession.verifiedEmail === 'organizador@reload.com' || selectedRole === "ORGANIZADOR") {
+      // Si es un Organizador autorizado (organizador@reload.com o admin@redlatdigital.org), desbloquear opción de Organizador
+      if (isAuthorizedOrganizerEmail(currentSession.verifiedEmail) || selectedRole === "ORGANIZADOR") {
         if (!roleInput.querySelector('option[value="ORGANIZADOR"]')) {
           const optOrg = document.createElement("option");
           optOrg.value = "ORGANIZADOR";
@@ -1507,7 +1511,7 @@
     function updateAdminUI() {
       if (currentSession.isAdminVerified) {
         userBadgeEmail.textContent = currentSession.verifiedEmail;
-        userBadgeTier.textContent = currentSession.verifiedEmail === 'organizador@reload.com'
+        userBadgeTier.textContent = isAuthorizedOrganizerEmail(currentSession.verifiedEmail)
           ? "ORGANIZADOR OFICIAL"
           : "ORGANIZACIÓN / STAFF";
         userBadgeTier.className = "text-[9px] text-emerald-400 font-bold uppercase tracking-wider";
@@ -1746,8 +1750,8 @@
       if (val === "LOCKED") {
         roleInput.value = currentSession.role;
         openHomeLanding();
-      } else if (val === "ORGANIZADOR" && currentSession.verifiedEmail !== 'organizador@reload.com') {
-        console.warn("Intento de bypass detectado: Rol de Organizador exclusivo para organizador@reload.com");
+      } else if (val === "ORGANIZADOR" && !isAuthorizedOrganizerEmail(currentSession.verifiedEmail)) {
+        console.warn("Intento de bypass detectado: Rol de Organizador no autorizado para este correo.");
         roleInput.value = currentSession.role || "PARTICIPANTE";
         currentSession.role = roleInput.value;
         render();
@@ -2502,7 +2506,7 @@
       const roleText = (roleInput.value || currentSession.role || defaultData.role).toUpperCase();
 
       // Protección activa de renderizado contra bypass en DevTools
-      if (roleText === "ORGANIZADOR" && (currentSession.verifiedEmail || "").trim().toLowerCase() !== 'organizador@reload.com') {
+      if (roleText === "ORGANIZADOR" && !isAuthorizedOrganizerEmail(currentSession.verifiedEmail)) {
         ctx.restore();
         setTimeout(lockAdminRoles, 0);
         return;
@@ -2612,7 +2616,7 @@
       // Acreditación oficial
       ctx.fillStyle = 'rgba(253, 243, 199, 0.82)';
       ctx.font = '500 18px "Roboto", sans-serif';
-      ctx.fillText("Miembro Oficial • Modalidad Híbrida", eventBlockX, 450);
+      ctx.fillText("Miembro Oficial • Modalidad VIRTUAL", eventBlockX, 450);
 
 
       // ================= 3. BLOQUE INFERIOR DEL PARTICIPANTE =================
@@ -2692,7 +2696,7 @@
 
       ctx.fillStyle = 'rgba(255, 102, 0, 0.85)';
       ctx.font = '600 12px "Roboto", monospace';
-      ctx.fillText("FORMATO VERTICAL 9:16", detailX, 1558);
+      ctx.fillText("", detailX, 1558);
 
       // Nombre del participante
       ctx.fillStyle = '#FFFFFF';
@@ -2730,7 +2734,7 @@
       ctx.fillText("#ELAD26 • RED LATINOAMERICANA DE ANTROPOLOGÍA DIGITAL", 75, 1845);
 
       ctx.textAlign = 'right';
-      ctx.fillText("reload.lat", CANVAS_WIDTH - 75, 1845);
+      ctx.fillText("", CANVAS_WIDTH - 75, 1845);
 
       ctx.restore();
     }
